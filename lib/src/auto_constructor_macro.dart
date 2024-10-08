@@ -1,25 +1,5 @@
-library;
-
-import 'dart:async';
-
 import 'package:collection/collection.dart';
 import 'package:macros/macros.dart';
-
-macro class FlutterSupabaseMacro implements ClassDeclarationsMacro, ClassDefinitionMacro {
-  const FlutterSupabaseMacro();
-
-  @override
-  FutureOr<void> buildDeclarationsForClass(ClassDeclaration clazz, MemberDeclarationBuilder builder,) async {
-    await Future.wait([
-      const AutoConstructor().buildDeclarationsForClass(clazz, builder)
-    ]);
-  }
-
-  @override
-  FutureOr<void> buildDefinitionForClass(ClassDeclaration clazz, TypeDefinitionBuilder builder) {
-
-  }
-}
 
 macro class AutoConstructor implements ClassDeclarationsMacro {
   const AutoConstructor();
@@ -39,7 +19,7 @@ macro class AutoConstructor implements ClassDeclarationsMacro {
     if (fields.isNotEmpty) {
       for (var field in fields) {
         var requiredKeyword = field.type.isNullable ? '' : 'required ';
-        params.addAll(['\n${requiredKeyword}', field.identifier, ',']);
+        params.addAll(['\n$requiredKeyword', field.identifier, ',']);
       }
     }
 
