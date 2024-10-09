@@ -1,6 +1,45 @@
 import 'package:collection/collection.dart';
 import 'package:macros/macros.dart';
 
+////////////////////////////////////////////////////////////////////////////////
+
+class _CustomConstructor {
+  final String name;
+  final List<Object> params;
+  final MethodDeclaration? superConstructor;
+
+  const _CustomConstructor(this.name, this.params, this.superConstructor);
+
+  List<Object> toParts() {
+    bool hasParams = params.isNotEmpty;
+    List<Object> parts = [
+      // Don't use the identifier here because it should just be the raw name.
+      name,
+      '(',
+      if (hasParams) '{',
+      ...params,
+      if (hasParams) '}',
+      ')',
+    ];
+    if (superConstructor != null) {
+      parts.addAll([' : super(']);
+      for (var param in superConstructor!.positionalParameters) {
+        parts.add('\n${param.identifier.name},');
+      }
+      if (superConstructor!.namedParameters.isNotEmpty) {
+        for (var param in superConstructor!.namedParameters) {
+          parts.add('\n${param.identifier.name}: ${param.identifier.name},');
+        }
+      }
+      parts.add(')');
+    }
+    parts.add(';');
+    return parts;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 macro class AutoConstructor implements ClassDeclarationsMacro {
   const AutoConstructor();
 
@@ -66,29 +105,30 @@ macro class AutoConstructor implements ClassDeclarationsMacro {
       }
     }
 
-    bool hasParams = params.isNotEmpty;
-    List<Object> parts = [
-      // Don't use the identifier here because it should just be the raw name.
-      clazz.identifier.name,
-      '(',
-      if (hasParams) '{',
-      ...params,
-      if (hasParams) '}',
-      ')',
-    ];
-    if (superconstructor != null) {
-      parts.addAll([' : super(']);
-      for (var param in superconstructor.positionalParameters) {
-        parts.add('\n${param.identifier.name},');
-      }
-      if (superconstructor.namedParameters.isNotEmpty) {
-        for (var param in superconstructor.namedParameters) {
-          parts.add('\n${param.identifier.name}: ${param.identifier.name},');
-        }
-      }
-      parts.add(')');
+    // Create custom constructors
+    final customConstructors = _createConstructors(
+      constructorsName: [
+        clazz.identifier.name,
+      ],
+      params: params,
+      superConstructor: superconstructor,
+    );
+    // Declare each constructor
+    for(var customConstructor in customConstructors) {
+      builder.declareInType(
+        DeclarationCode.fromParts(customConstructor.toParts())
+      );
     }
-    parts.add(';');
-    builder.declareInType(DeclarationCode.fromParts(parts));
+  }
+
+
+  List<_CustomConstructor> _createConstructors({
+    required List<String> constructorsName,
+    required List<Object> params,
+    MethodDeclaration? superConstructor,
+  }) {
+    return constructorsName.map((name) {
+      return _CustomConstructor(name, params, superConstructor);
+    }).toList();
   }
 }
