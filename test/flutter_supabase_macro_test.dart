@@ -1,5 +1,6 @@
 import 'package:flutter_supabase_macro/flutter_supabase_macro.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:json/json.dart';
 
 @FlutterSupabaseMacro(idLabel: 'id')
 class User {
@@ -9,6 +10,9 @@ class User {
 
   const User({required this.id, required this.name, required this.age});
 }
+
+@JsonCodable()
+class Test {}
 
 void main() {
   test('a', () {

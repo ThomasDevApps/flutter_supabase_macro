@@ -30,7 +30,7 @@ macro class FlutterSupabaseMacro implements ClassDeclarationsMacro {
     var mapStringDynamic =
     NamedTypeAnnotationCode(name: map, typeArguments: [string, dynamic]);
 
-    final declarationCode = await _createDeclarationCode(
+    final declarationCode = await _createToJsonSupabaseFunction(
       mapStringDynamic: mapStringDynamic,
       builder: builder
     );
@@ -38,15 +38,14 @@ macro class FlutterSupabaseMacro implements ClassDeclarationsMacro {
   }
 
 
-  Future<DeclarationCode> _createDeclarationCode({
+  Future<DeclarationCode> _createToJsonSupabaseFunction({
     required NamedTypeAnnotationCode mapStringDynamic,
     required MemberDeclarationBuilder builder,
   }) async {
     return DeclarationCode.fromParts([
       '@',
       await builder.resolveIdentifier(_thisLibrary, 'ToJson'),
-      // TODO(language#3580): Remove/replace 'external'?
-      '($idLabel)\n external ',
+      '()\n external ',
       mapStringDynamic,
       ' toJsonSupabase();',
     ]);
