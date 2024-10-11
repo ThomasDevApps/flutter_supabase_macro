@@ -48,12 +48,13 @@ class User {
   // ...
 }
 ```
-It will generate a `toJsonSupabase()` method that returns a Map 
-that does not contain the `primaryKey` (`id` in this case) : 
+It will generate a `toJsonSupabase()` method that returns a 
+`Map<String, dynamic>` that does not contain the `primaryKey` 
+(`id` in this case) : 
 
 ```dart
 final user = User(id: 'id', name: 'Toto', age: 22);
-final json = user.toJsonSupabase(); // Map<String, dynamic>
+final json = user.toJsonSupabase(); 
 ```
 
 ## 📖 Additional information
