@@ -45,14 +45,14 @@ All you need to do is add the following :
 ```dart
 @FlutterSupabaseMacro(primaryKey: 'id') // Add this (primaryKey is 'id' by default)
 class User {
-  ...
+  // ...
 }
 ```
 It will generate a `toJsonSupabase()` method : 
 
 ```dart
 final user = User(id: 'id', name: 'Toto', age: 22);
-final json = user.toJsonSupabase();
+final json = user.toJsonSupabase(); // Map<String, dynamic>
 ```
 
 ## 📖 Additional information
