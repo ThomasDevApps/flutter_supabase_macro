@@ -26,7 +26,7 @@ flutter_supabase_macro:
     url: https://github.com/ThomasDevApps/flutter_supabase_macro.git
 ```
 
-## 🔎 How it work
+## 🔎 How it works
 Let's imagine the `User` class :
 
 ```dart
