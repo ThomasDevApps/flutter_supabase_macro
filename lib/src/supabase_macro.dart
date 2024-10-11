@@ -13,7 +13,8 @@ final _toJsonMethodName = 'toJsonSupabase';
 
 macro class FlutterSupabaseMacro with _Shared, _ToJsonSupabase implements ClassDeclarationsMacro, ClassDefinitionMacro {
   final String idLabel;
-  const FlutterSupabaseMacro({this.idLabel = 'id'});
+  final List<String>? fieldsRequired;
+  const FlutterSupabaseMacro({this.idLabel = 'id', this.fieldsRequired});
 
   /// Declares the `fromJson` constructor and `toJsonSupabase` method, but does not
   /// implement them.
@@ -35,7 +36,7 @@ macro class FlutterSupabaseMacro with _Shared, _ToJsonSupabase implements ClassD
   ) async {
     final introspectionData =
       await _SharedIntrospectionData.build(builder, clazz);
-    await _buildToJsonSupabase(clazz, builder, introspectionData, idLabel);
+    await _buildToJsonSupabase(clazz, builder, introspectionData, idLabel, fieldsRequired);
   }
 }
 
