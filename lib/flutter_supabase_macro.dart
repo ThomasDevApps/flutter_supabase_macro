@@ -1,3 +1,3 @@
 library;
 
-export 'src/annotations.dart';
+export 'src/supabase_macro.dart';
