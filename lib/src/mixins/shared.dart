@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, unintended_html_in_doc_comment
 
 part of '../supabase_macro.dart';
 
