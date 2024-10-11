@@ -61,3 +61,5 @@ print(json); // {}
 ## 📖 Additional information
 
 This package is still undergoing experimentation, and is in no way intended for use in production apps.
+
+Not officially affiliated with Supabase.
