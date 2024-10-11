@@ -11,7 +11,10 @@ final _dartCore = Uri.parse('dart:core');
 
 final _toJsonMethodName = 'toJsonSupabase';
 
-macro class FlutterSupabaseMacro with _Shared, _ToJsonSupabase implements ClassDeclarationsMacro, ClassDefinitionMacro {
+macro class FlutterSupabaseMacro
+    with _Shared, _ToJsonSupabase
+    implements ClassDeclarationsMacro, ClassDefinitionMacro {
+
   final String idLabel;
   final List<String>? fieldsRequired;
   const FlutterSupabaseMacro({this.idLabel = 'id', this.fieldsRequired});
@@ -36,7 +39,13 @@ macro class FlutterSupabaseMacro with _Shared, _ToJsonSupabase implements ClassD
   ) async {
     final introspectionData =
       await _SharedIntrospectionData.build(builder, clazz);
-    await _buildToJsonSupabase(clazz, builder, introspectionData, idLabel, fieldsRequired);
+    await _buildToJsonSupabase(
+      clazz, 
+      builder,
+      introspectionData,
+      idLabel,
+      fieldsRequired
+    );
   }
 }
 
@@ -126,6 +135,8 @@ final class _SharedIntrospectionData {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 extension _FirstWhereOrNull<T> on Iterable<T> {
   T? firstWhereOrNull(bool Function(T) compare) {
     for (final item in this) {
@@ -135,11 +146,15 @@ extension _FirstWhereOrNull<T> on Iterable<T> {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 extension _IsExactly on TypeDeclaration {
   /// Cheaper than checking types using a [StaticType].
   bool isExactly(String name, Uri library) =>
       identifier.name == name && this.library.uri == library;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 extension on Code {
   /// Used for error messages.
@@ -164,6 +179,8 @@ extension on Code {
     }
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 extension on NamedTypeAnnotation {
   /// Follows the declaration of this type through any type aliases, until it
