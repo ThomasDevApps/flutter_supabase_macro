@@ -53,9 +53,9 @@ It will generate a `toJsonSupabase()` method that returns a
 (`id` in this case) : 
 
 ```dart
-final user = User(id: 'id', name: 'Toto', age: 22);
+final user = User(id: 'the-id', name: 'Toto', age: 22);
 final json = user.toJsonSupabase(); 
-print(json); // {}
+print(json); // {'name': 'Toto', 'age': 22}
 ```
 
 ## 📖 Additional information
