@@ -44,6 +44,9 @@ mixin _ToJsonSupabase on _Shared {
     return true;
   }
 
+  /// Build the `toJsonSupabase` method.
+  ///
+  /// - [primaryKey] is the key to remove from the `Map`.
   Future<void> _buildToJsonSupabase(
     ClassDeclaration clazz,
     TypeDefinitionBuilder typeBuilder,
