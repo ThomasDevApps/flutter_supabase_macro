@@ -39,7 +39,7 @@ mixin _Shared {
 
   /// Does some basic validation on [clazz], and shared setup logic.
   ///
-  /// Returns a code representation of the [Map<String, Object>] class.
+  /// Returns a code representation of the [Map<String, Object?>] class.
   Future<NamedTypeAnnotationCode> _setup(
     ClassDeclaration clazz,
     MemberDeclarationBuilder builder,
@@ -64,7 +64,7 @@ mixin _Shared {
       name: map,
       typeArguments: [
         NamedTypeAnnotationCode(name: string),
-        NamedTypeAnnotationCode(name: object).asNonNullable,
+        NamedTypeAnnotationCode(name: object).asNullable,
       ],
     );
   }

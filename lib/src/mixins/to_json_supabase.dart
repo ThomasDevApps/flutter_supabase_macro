@@ -22,7 +22,9 @@ mixin _ToJsonSupabase on _Shared {
   /// Returns `true` if the check succeeded (there was no `toJson`) and false
   /// if it didn't (a diagnostic was emitted).
   Future<bool> _checkNoToJson(
-      DeclarationBuilder builder, ClassDeclaration clazz) async {
+    DeclarationBuilder builder,
+    ClassDeclaration clazz,
+  ) async {
     final methods = await builder.methodsOf(clazz);
     final toJsonSupabase =
         methods.firstWhereOrNull((m) => m.identifier.name == _toJsonMethodName);
@@ -30,8 +32,9 @@ mixin _ToJsonSupabase on _Shared {
       builder.report(
         Diagnostic(
           DiagnosticMessage(
-              'Cannot generate a toJson method due to this existing one.',
-              target: toJsonSupabase.asDiagnosticTarget),
+            'Cannot generate a toJson method due to this existing one.',
+            target: toJsonSupabase.asDiagnosticTarget,
+          ),
           Severity.error,
         ),
       );
@@ -49,8 +52,9 @@ mixin _ToJsonSupabase on _Shared {
     final toJsonSupabase = methods.firstWhereOrNull(
       (m) => m.identifier.name == _toJsonMethodName,
     );
+    // Do a initial check
     await _initialCheck(toJsonSupabase, typeBuilder, introspectionData);
-
+    // Get the FunctionDefinitionBuilder
     final builder = await typeBuilder.buildMethod(toJsonSupabase!.identifier);
 
     final superclassHasToJson =
@@ -151,7 +155,7 @@ mixin _ToJsonSupabase on _Shared {
             DiagnosticMessage(
               'Serialization of classes that extend other classes is only '
               'supported if those classes have a valid '
-              '`Map<String, Object?> toJson()` method.',
+              '`Map<String, Object?> $_toJsonMethodName()` method.',
               target: introspectionData.clazz.superclass?.asDiagnosticTarget,
             ),
             Severity.error,
@@ -171,7 +175,7 @@ mixin _ToJsonSupabase on _Shared {
     return [
       '{\n    final json = ',
       if (superclassHasToJson)
-        'super.toJson()'
+        'super.$_toJsonMethodName()'
       else ...[
         '<',
         introspectionData.stringCode,
