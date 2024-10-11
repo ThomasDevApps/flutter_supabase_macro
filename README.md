@@ -12,7 +12,7 @@ and the Flutter guide for
 -->
 # Flutter Supabase Macro
 
-Package greatly inspired by `JsonCodable` makes it easy to create a JSON format of a template for Supabase.
+Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create a JSON format of a template for Supabase.
 
 ## 🚀 Getting started
 
