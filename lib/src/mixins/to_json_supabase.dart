@@ -48,8 +48,7 @@ mixin _ToJsonSupabase on _Shared {
     ClassDeclaration clazz,
     TypeDefinitionBuilder typeBuilder,
     _SharedIntrospectionData introspectionData,
-    String idLabel,
-    List<String>? fieldsRequired,
+    String primaryKey,
   ) async {
     final methods = await typeBuilder.methodsOf(clazz);
     final toJsonSupabase = methods.firstWhereOrNull(
@@ -68,10 +67,7 @@ mixin _ToJsonSupabase on _Shared {
         superclassHasToJson: superclassHasToJson);
 
     final fields = introspectionData.fields.where((f) {
-      bool canBeAdd = f.identifier.name != idLabel;
-      if (fieldsRequired != null && canBeAdd) {
-        canBeAdd = fieldsRequired.contains(f.identifier.name);
-      }
+      bool canBeAdd = f.identifier.name != primaryKey;
       return canBeAdd;
     });
     parts.addAll(

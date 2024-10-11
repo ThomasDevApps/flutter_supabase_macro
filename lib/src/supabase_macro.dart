@@ -15,9 +15,8 @@ macro class FlutterSupabaseMacro
     with _Shared, _ToJsonSupabase
     implements ClassDeclarationsMacro, ClassDefinitionMacro {
 
-  final String idLabel;
-  final List<String>? fieldsRequired;
-  const FlutterSupabaseMacro({this.idLabel = 'id', this.fieldsRequired});
+  final String primaryKey;
+  const FlutterSupabaseMacro({this.primaryKey = 'id'});
 
   /// Declares the `fromJson` constructor and `toJsonSupabase` method, but does not
   /// implement them.
@@ -43,8 +42,7 @@ macro class FlutterSupabaseMacro
       clazz,
       builder,
       introspectionData,
-      idLabel,
-      fieldsRequired
+      primaryKey,
     );
   }
 }

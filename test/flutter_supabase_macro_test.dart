@@ -1,7 +1,7 @@
 import 'package:flutter_supabase_macro/flutter_supabase_macro.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-@FlutterSupabaseMacro(idLabel: 'id')
+@FlutterSupabaseMacro(primaryKey: 'id')
 class User {
   final String id;
   final String name;
@@ -11,7 +11,7 @@ class User {
 }
 
 void main() {
-  test('a', () {
+  test('Test that id is missing from the json', () {
     final user = User(id: 'id', name: 'Toto', age: 22);
     final json = user.toJsonSupabase();
 
