@@ -47,6 +47,7 @@ mixin _ToJsonSupabase on _Shared {
     ClassDeclaration clazz,
     TypeDefinitionBuilder typeBuilder,
     _SharedIntrospectionData introspectionData,
+    String idLabel,
   ) async {
     final methods = await typeBuilder.methodsOf(clazz);
     final toJsonSupabase = methods.firstWhereOrNull(
@@ -64,7 +65,9 @@ mixin _ToJsonSupabase on _Shared {
     final parts = _createParts(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
-    final fields = introspectionData.fields;
+    final fields = introspectionData.fields.where((f) {
+      return f.identifier.name != idLabel;
+    });
     parts.addAll(
       await Future.wait(
         fields.map(
