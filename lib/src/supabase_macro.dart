@@ -61,17 +61,17 @@ final class _SharedIntrospectionData {
   /// A [Code] representation of the type [List<Object?>].
   final NamedTypeAnnotationCode jsonListCode;
 
-  /// A [Code] representation of the type [Map<String, Object?>].
+  /// A [Code] representation of the type [Map<String, dynamic>].
   final NamedTypeAnnotationCode jsonMapCode;
 
-  /// The resolved [StaticType] representing the [Map<String, Object?>] type.
+  /// The resolved [StaticType] representing the [Map<String, dynamic>] type.
   final StaticType jsonMapType;
 
   /// The resolved identifier for the [MapEntry] class.
   final Identifier mapEntry;
 
   /// A [Code] representation of the type [Object].
-  final NamedTypeAnnotationCode objectCode;
+  final NamedTypeAnnotationCode dynamicCode;
 
   /// A [Code] representation of the type [String].
   final NamedTypeAnnotationCode stringCode;
@@ -86,28 +86,27 @@ final class _SharedIntrospectionData {
     required this.jsonMapCode,
     required this.jsonMapType,
     required this.mapEntry,
-    required this.objectCode,
+    required this.dynamicCode,
     required this.stringCode,
     required this.superclass,
   });
 
   static Future<_SharedIntrospectionData> build(
       DeclarationPhaseIntrospector builder, ClassDeclaration clazz) async {
-    final (list, map, mapEntry, object, string) = await (
+    final (list, map, mapEntry, dynamic, string) = await (
     builder.resolveIdentifier(_dartCore, 'List'),
     builder.resolveIdentifier(_dartCore, 'Map'),
     builder.resolveIdentifier(_dartCore, 'MapEntry'),
-    builder.resolveIdentifier(_dartCore, 'Object'),
+    builder.resolveIdentifier(_dartCore, 'dynamic'),
     builder.resolveIdentifier(_dartCore, 'String'),
     ).wait;
-    final objectCode = NamedTypeAnnotationCode(name: object);
-    final nullableObjectCode = objectCode.asNullable;
+    final dynamicCode = NamedTypeAnnotationCode(name: dynamic);
     final jsonListCode = NamedTypeAnnotationCode(name: list, typeArguments: [
-      nullableObjectCode,
+      dynamicCode,
     ]);
     final jsonMapCode = NamedTypeAnnotationCode(name: map, typeArguments: [
       NamedTypeAnnotationCode(name: string),
-      nullableObjectCode,
+      dynamicCode,
     ]);
     final stringCode = NamedTypeAnnotationCode(name: string);
     final superclass = clazz.superclass;
@@ -126,7 +125,7 @@ final class _SharedIntrospectionData {
       jsonMapCode: jsonMapCode,
       jsonMapType: jsonMapType,
       mapEntry: mapEntry,
-      objectCode: objectCode,
+      dynamicCode: dynamicCode,
       stringCode: stringCode,
       superclass: superclassDecl as ClassDeclaration?,
     );

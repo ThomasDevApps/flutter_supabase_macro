@@ -129,7 +129,7 @@ mixin _ToJsonSupabase on _Shared {
         Diagnostic(
           DiagnosticMessage(
             'Expected no parameters, and a return type of '
-            'Map<String, Object?>',
+            'Map<String, dynamic>',
             target: method.asDiagnosticTarget,
           ),
           Severity.error,
@@ -167,7 +167,7 @@ mixin _ToJsonSupabase on _Shared {
             DiagnosticMessage(
               'Serialization of classes that extend other classes is only '
               'supported if those classes have a valid '
-              '`Map<String, Object?> $_toJsonMethodName()` method.',
+              '`Map<String, dynamic> $_toJsonMethodName()` method.',
               target: introspectionData.clazz.superclass?.asDiagnosticTarget,
             ),
             Severity.error,
@@ -192,7 +192,7 @@ mixin _ToJsonSupabase on _Shared {
         '<',
         introspectionData.stringCode,
         ', ',
-        introspectionData.objectCode.asNullable,
+        introspectionData.dynamicCode,
         '>{}',
       ],
       ';\n    ',
@@ -279,7 +279,7 @@ mixin _ToJsonSupabase on _Shared {
       Diagnostic(
         DiagnosticMessage(
             'Unable to serialize type, it must be a native JSON type or a '
-            'type with a `Map<String, Object?> toJson()` method.',
+            'type with a `Map<String, dynamic> toJson()` method.',
             target: type.asDiagnosticTarget),
         Severity.error,
       ),

@@ -39,7 +39,7 @@ mixin _Shared {
 
   /// Does some basic validation on [clazz], and shared setup logic.
   ///
-  /// Returns a code representation of the [Map<String, Object?>] class.
+  /// Returns a code representation of the [Map<String, dynamic>] class.
   Future<NamedTypeAnnotationCode> _setup(
     ClassDeclaration clazz,
     MemberDeclarationBuilder builder,
@@ -55,16 +55,16 @@ mixin _Shared {
       );
     }
 
-    final (map, string, object) = await (
+    final (map, string, dynamic) = await (
       builder.resolveIdentifier(_dartCore, 'Map'),
       builder.resolveIdentifier(_dartCore, 'String'),
-      builder.resolveIdentifier(_dartCore, 'Object'),
+      builder.resolveIdentifier(_dartCore, 'dynamic'),
     ).wait;
     return NamedTypeAnnotationCode(
       name: map,
       typeArguments: [
         NamedTypeAnnotationCode(name: string),
-        NamedTypeAnnotationCode(name: object).asNullable,
+        NamedTypeAnnotationCode(name: dynamic),
       ],
     );
   }
