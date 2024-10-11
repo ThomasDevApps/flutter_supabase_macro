@@ -40,7 +40,7 @@ macro class FlutterSupabaseMacro
     final introspectionData =
       await _SharedIntrospectionData.build(builder, clazz);
     await _buildToJsonSupabase(
-      clazz, 
+      clazz,
       builder,
       introspectionData,
       idLabel,

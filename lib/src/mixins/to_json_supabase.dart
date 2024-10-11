@@ -1,12 +1,13 @@
 part of '../supabase_macro.dart';
 
 mixin _ToJsonSupabase on _Shared {
-  // TODO à doc
+  /// Declare the [_toJsonMethodName] method.
   Future<void> _declareToJsonSupabase(
     ClassDeclaration clazz,
     MemberDeclarationBuilder builder,
     NamedTypeAnnotationCode mapStringObject,
   ) async {
+    // Check that no toJsonSupabase method exist
     final checkNoToJson = await _checkNoToJson(builder, clazz);
     if (!checkNoToJson) return;
     builder.declareInType(
