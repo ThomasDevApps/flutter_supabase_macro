@@ -10,30 +10,51 @@ For general information about developing packages, see the Dart guide for
 and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/to/develop-packages).
 -->
+# Flutter Supabase Macro
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Package greatly inspired by `JsonCodable` makes it easy to create a JSON format of a template for Supabase.
 
-## Features
+## 🚀 Getting started
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Because the macros are still under development, you need to follow these instructions to be able to test this package : https://dart.dev/language/macros#set-up-the-experiment
 
-## Getting started
+Then add in your `pubspec.yaml` : 
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+flutter_supabase_macro:
+  git:
+    url: https://github.com/ThomasDevApps/flutter_supabase_macro.git
 ```
 
-## Additional information
+## 🔎 How it work
+Let's imagine the User class :
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+class User {
+  final String id;
+  final String name;
+  final int age;
+
+  const User({required this.id, required this.name, required this.age});
+}
+```
+Let's assume that in your Supabase `users` table, the primary key is named `id`.
+
+All you need to do is add the following : 
+
+```dart
+@FlutterSupabaseMacro(idLabel: 'id') // Add this (idLabel is 'id' by default)
+class User {
+  ...
+}
+```
+It will generate a `toJsonSupabase()` method : 
+
+```dart
+final user = User(id: 'id', name: 'Toto', age: 22);
+final json = user.toJsonSupabase();
+```
+
+## 📖 Additional information
+
+This package is still undergoing experimentation, and is in no way intended for use in production apps.
