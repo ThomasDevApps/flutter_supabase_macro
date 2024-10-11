@@ -27,7 +27,7 @@ flutter_supabase_macro:
 ```
 
 ## 🔎 How it work
-Let's imagine the User class :
+Let's imagine the `User` class :
 
 ```dart
 class User {
@@ -43,7 +43,7 @@ Let's assume that in your Supabase `users` table, the primary key is named `id`.
 All you need to do is add the following : 
 
 ```dart
-@FlutterSupabaseMacro(idLabel: 'id') // Add this (idLabel is 'id' by default)
+@FlutterSupabaseMacro(primaryKey: 'id') // Add this (primaryKey is 'id' by default)
 class User {
   ...
 }
