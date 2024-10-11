@@ -1,6 +1,45 @@
 part of '../supabase_macro.dart';
 
 mixin _ToJsonSupabase on _Shared {
+  // TODO à doc
+  Future<void> _declareToJsonSupabase(
+    ClassDeclaration clazz,
+    MemberDeclarationBuilder builder,
+    NamedTypeAnnotationCode mapStringObject,
+  ) async {
+    final checkNoToJson = await _checkNoToJson(builder, clazz);
+    if (!checkNoToJson) return;
+    builder.declareInType(
+      DeclarationCode.fromParts(
+        [' external ', mapStringObject, ' $_toJsonMethodName();'],
+      ),
+    );
+  }
+
+  /// Emits an error [Diagnostic] if there is an existing [_toJsonMethodName]
+  /// method on [clazz].
+  ///
+  /// Returns `true` if the check succeeded (there was no `toJson`) and false
+  /// if it didn't (a diagnostic was emitted).
+  Future<bool> _checkNoToJson(
+      DeclarationBuilder builder, ClassDeclaration clazz) async {
+    final methods = await builder.methodsOf(clazz);
+    final toJsonSupabase =
+        methods.firstWhereOrNull((m) => m.identifier.name == _toJsonMethodName);
+    if (toJsonSupabase != null) {
+      builder.report(
+        Diagnostic(
+          DiagnosticMessage(
+              'Cannot generate a toJson method due to this existing one.',
+              target: toJsonSupabase.asDiagnosticTarget),
+          Severity.error,
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
   Future<void> _buildToJsonSupabase(
     ClassDeclaration clazz,
     TypeDefinitionBuilder typeBuilder,
@@ -12,12 +51,30 @@ mixin _ToJsonSupabase on _Shared {
     );
     await _initialCheck(toJsonSupabase, typeBuilder, introspectionData);
 
+    final builder = await typeBuilder.buildMethod(toJsonSupabase!.identifier);
+
     final superclassHasToJson =
         await _checkSuperclassHasToJson(introspectionData, typeBuilder);
     if (superclassHasToJson == null) return;
 
     final parts = _createParts(introspectionData,
         superclassHasToJson: superclassHasToJson);
+
+    final fields = introspectionData.fields;
+    parts.addAll(
+      await Future.wait(
+        fields.map(
+          (field) => addEntryForField(
+            field,
+            builder,
+            toJsonSupabase,
+            introspectionData,
+          ),
+        ),
+      ),
+    );
+    parts.add('return json;\n  }');
+    builder.augment(FunctionBodyCode.fromParts(parts));
   }
 
   /// Returns void if [toJsonSupabase] not exist.
@@ -126,7 +183,12 @@ mixin _ToJsonSupabase on _Shared {
     ];
   }
 
-  Future<Code> addEntryForField(FieldDeclaration field) async {
+  Future<Code> addEntryForField(
+    FieldDeclaration field,
+    DefinitionBuilder builder,
+    MethodDeclaration toJson,
+    _SharedIntrospectionData introspectionData,
+  ) async {
     final parts = <Object>[];
     final doNullCheck = field.type.isNullable;
     if (doNullCheck) {
@@ -136,21 +198,138 @@ mixin _ToJsonSupabase on _Shared {
         ' != null) {\n      ',
       ]);
     }
-    parts.addAll(["json[r'", field.identifier.name, "'] = ", await _con]);
+    parts.addAll([
+      "json[r'",
+      field.identifier.name,
+      "'] = ",
+      await _convertTypeToJson(
+        field.type,
+        RawCode.fromParts([
+          field.identifier,
+          if (doNullCheck) '!',
+        ]),
+        builder,
+        introspectionData,
+      ),
+      ';\n    ',
+    ]);
+    if (doNullCheck) {
+      parts.add('}\n    ');
+    }
+    return RawCode.fromParts(parts);
   }
 
+  // TODO à commenter
   Future<Code> _convertTypeToJson(
     TypeAnnotation rawType,
     Code valueReference,
     DefinitionBuilder builder,
     _SharedIntrospectionData introspectionData,
   ) async {
+    // Get the type of rawType
     final type = _checkNamedType(rawType, builder);
     if (type == null) {
       return RawCode.fromString(
         "throw 'Unable to serialize type ${rawType.code.debugString}'",
       );
     }
-    // TODO à continuer
+    // Get the class declaration of the type
+    final classDeclaration = await type.classDeclaration(builder);
+    if (classDeclaration == null) {
+      return RawCode.fromString(
+        "throw 'Unable to serialize type ${type.code.debugString}';",
+      );
+    }
+    // Handle if the type is nullable
+    final nullCheck = type.isNullable
+        ? RawCode.fromParts([
+            valueReference,
+            ' == null ? null : ',
+          ])
+        : null;
+
+    // Convert the type to a serialized one
+    final typeSerialized = await _serializeType(type, classDeclaration,
+        nullCheck, valueReference, builder, introspectionData);
+    if (typeSerialized != null) return typeSerialized;
+
+    // Return toJsonSupabase method if already exist
+    final toJsonMethod = await _getToJsonMethod(
+        classDeclaration, builder, nullCheck, valueReference);
+    if (toJsonMethod != null) return toJsonMethod;
+
+    // Unsupported type, report an error and return valid code that throws.
+    builder.report(
+      Diagnostic(
+        DiagnosticMessage(
+            'Unable to serialize type, it must be a native JSON type or a '
+            'type with a `Map<String, Object?> toJson()` method.',
+            target: type.asDiagnosticTarget),
+        Severity.error,
+      ),
+    );
+    return RawCode.fromString(
+        "throw 'Unable to serialize type ${type.code.debugString}';");
+  }
+
+  /// TODO à doc
+  Future<Code?> _serializeType(
+    NamedTypeAnnotation type,
+    ClassDeclaration classDeclaration,
+    RawCode? nullCheck,
+    Code valueReference,
+    DefinitionBuilder builder,
+    _SharedIntrospectionData introspectionData,
+  ) async {
+    if (classDeclaration.library.uri == _dartCore) {
+      switch (classDeclaration.identifier.name) {
+        case 'List' || 'Set':
+          return RawCode.fromParts([
+            if (nullCheck != null) nullCheck,
+            '[ for (final item in ',
+            valueReference,
+            ') ',
+            await _convertTypeToJson(type.typeArguments.single,
+                RawCode.fromString('item'), builder, introspectionData),
+            ']',
+          ]);
+        case 'Map':
+          return RawCode.fromParts([
+            if (nullCheck != null) nullCheck,
+            '{ for (final ',
+            introspectionData.mapEntry,
+            '(:key, :value) in ',
+            valueReference,
+            '.entries) key:',
+            await _convertTypeToJson(type.typeArguments.last,
+                RawCode.fromString('value'), builder, introspectionData),
+            '}',
+          ]);
+        case 'int' || 'double' || 'num' || 'String' || 'bool':
+          return valueReference;
+      }
+    }
+    return null;
+  }
+
+  // TODO à commenter
+  Future<Code?>? _getToJsonMethod(
+    ClassDeclaration classDeclaration,
+    DefinitionBuilder builder,
+    RawCode? nullCheck,
+    Code valueReference,
+  ) async {
+    final methods = await builder.methodsOf(classDeclaration);
+    final toJson = methods
+        .firstWhereOrNull((m) => m.identifier.name == _toJsonMethodName)
+        ?.identifier;
+    if (toJson != null) {
+      return RawCode.fromParts([
+        if (nullCheck != null) nullCheck,
+        valueReference,
+        '.$_toJsonMethodName()'
+      ]);
+    }
+    return null;
   }
 }
