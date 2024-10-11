@@ -50,22 +50,28 @@ mixin _ToJsonSupabase on _Shared {
     _SharedIntrospectionData introspectionData,
     String primaryKey,
   ) async {
+    // Get all methods of the class
     final methods = await typeBuilder.methodsOf(clazz);
+    // Get the toJsonSupabase method (if exist)
     final toJsonSupabase = methods.firstWhereOrNull(
       (m) => m.identifier.name == _toJsonMethodName,
     );
     // Do a initial check
     await _initialCheck(toJsonSupabase, typeBuilder, introspectionData);
+
     // Get the FunctionDefinitionBuilder
     final builder = await typeBuilder.buildMethod(toJsonSupabase!.identifier);
 
+    // Check that superclass has toJsonSupabase
     final superclassHasToJson =
         await _checkSuperclassHasToJson(introspectionData, typeBuilder);
     if (superclassHasToJson == null) return;
 
+    // Create different parts
     final parts = _createParts(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
+    // Get all fields
     final fields = introspectionData.fields.where((f) {
       bool canBeAdd = f.identifier.name != primaryKey;
       return canBeAdd;
@@ -82,6 +88,7 @@ mixin _ToJsonSupabase on _Shared {
         ),
       ),
     );
+
     parts.add('return json;\n  }');
     builder.augment(FunctionBodyCode.fromParts(parts));
   }
