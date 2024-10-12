@@ -182,8 +182,26 @@ mixin _ToJsonSupabase on _Shared {
     return superclassHasToJson;
   }
 
-  // TODO à doc
-  List<Object> _createParts(
+  /// Initialize the map to return.
+  ///
+  /// Two case are handled according with [superclassHasToJson].
+  ///
+  /// If [superclassHasToJson] is true : 
+  /// ```dart
+  /// {
+  ///   final json = super.toJsonSupabase();
+  /// 
+  /// ```
+  ///
+  /// Otherwise : 
+  /// ```dart 
+  /// {
+  ///   final json = <String, dynamic>{};
+  ///
+  /// ```
+  ///
+  /// (The last `}` is voluntarily ommited)
+  List<Object> _initializeMap(
     _SharedIntrospectionData introspectionData, {
     required bool superclassHasToJson,
   }) {
