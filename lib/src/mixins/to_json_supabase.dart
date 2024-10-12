@@ -291,7 +291,11 @@ mixin _ToJsonSupabase on _Shared {
         "throw 'Unable to serialize type ${type.code.debugString}';");
   }
 
-  /// TODO à doc
+  /// Function to serialiaze [valueReference] according with the 
+  /// [classDeclaration] identifier's name.
+  ///
+  /// Currently `List`, `Set`, `Map`, `int`, `double`, `num`,
+  /// `String`, `bool` are handled.
   Future<Code?> _serializeType(
     NamedTypeAnnotation type,
     ClassDeclaration classDeclaration,
