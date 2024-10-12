@@ -345,7 +345,7 @@ mixin _ToJsonSupabase on _Shared {
             '[ for (final item in ',
             valueReference,
             ') ',
-            await _convertTypeToJson(type.typeArguments.single,
+            await _serializeType(type.typeArguments.single,
                 RawCode.fromString('item'), builder, introspectionData),
             ']',
           ]);
@@ -357,7 +357,7 @@ mixin _ToJsonSupabase on _Shared {
             '(:key, :value) in ',
             valueReference,
             '.entries) key:',
-            await _convertTypeToJson(type.typeArguments.last,
+            await _serializeType(type.typeArguments.last,
                 RawCode.fromString('value'), builder, introspectionData),
             '}',
           ]);
