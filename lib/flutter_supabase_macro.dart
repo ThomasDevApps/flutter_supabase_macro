@@ -5,8 +5,8 @@ import 'dart:async';
 
 import 'package:macros/macros.dart';
 
-part 'mixins/shared.dart';
-part 'mixins/to_json_supabase.dart';
+part 'src/mixins/shared.dart';
+part 'src/mixins/to_json_supabase.dart';
 
 final _dartCore = Uri.parse('dart:core');
 
