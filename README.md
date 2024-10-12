@@ -14,6 +14,10 @@ and the Flutter guide for
 
 Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create a JSON format of a template for Supabase.
 
+- [Getting started](#-getting-started)
+- [How it works](#-how-it-works)
+- [Additional informations](#-additional-informations)
+  
 ## 🚀 Getting started
 
 Because the macros are still under development, you need to follow these instructions to be able to test this package : https://dart.dev/language/macros#set-up-the-experiment
@@ -58,7 +62,7 @@ final json = user.toJsonSupabase();
 print(json); // {}
 ```
 
-## 📖 Additional information
+## 📖 Additional informations
 
 This package is still undergoing experimentation, and is in no way intended for use in production apps.
 
