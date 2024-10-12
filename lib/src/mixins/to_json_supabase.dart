@@ -331,7 +331,8 @@ mixin _ToJsonSupabase on _Shared {
     return null;
   }
 
-  // TODO à commenter
+  /// Returns [_toJsonMethodName] from the class (if exist).
+  /// Returns null otherwise.
   Future<Code?>? _getToJsonMethod(
     ClassDeclaration classDeclaration,
     DefinitionBuilder builder,
