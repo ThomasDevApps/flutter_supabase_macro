@@ -320,7 +320,8 @@ mixin _ToJsonSupabase on _Shared {
       ),
     );
     return RawCode.fromString(
-        "throw 'Unable to serialize type ${type.code.debugString}';");
+        "throw 'Unable to serialize type ${type.code.debugString}';",
+    );
   }
 
   /// Function to serialize [valueReference] according with the 
