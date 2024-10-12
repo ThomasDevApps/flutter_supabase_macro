@@ -291,7 +291,7 @@ mixin _ToJsonSupabase on _Shared {
         "throw 'Unable to serialize type ${type.code.debugString}';");
   }
 
-  /// Function to serialiaze [valueReference] according with the 
+  /// Function to serialize [valueReference] according with the 
   /// [classDeclaration] identifier's name.
   ///
   /// Currently `List`, `Set`, `Map`, `int`, `double`, `num`,
