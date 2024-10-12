@@ -202,10 +202,18 @@ mixin _ToJsonSupabase on _Shared {
     ];
   }
 
+  /// Create JSON entries for [field].
+  ///
+  /// Example : for a field named `age`, the entry will be :
+  ///
+  /// ```dart
+  /// if (age != null) { // Only if the field is nullable.
+  ///   json[r'"age"'] = age!; // ! present only if the field is nullable by default.
+  /// } // Only if the field is nullable.
+  /// ```
   Future<Code> addEntryForField(
     FieldDeclaration field,
     DefinitionBuilder builder,
-    MethodDeclaration toJson,
     _SharedIntrospectionData introspectionData,
   ) async {
     final parts = <Object>[];
