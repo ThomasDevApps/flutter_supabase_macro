@@ -71,7 +71,7 @@ mixin _ToJsonSupabase on _Shared {
     if (superclassHasToJson == null) return;
 
     // Create different parts
-    final parts = _createParts(introspectionData,
+    final parts = _serializeValueAccordingType(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
     // Get all fields
