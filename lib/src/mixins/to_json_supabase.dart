@@ -247,7 +247,7 @@ mixin _ToJsonSupabase on _Shared {
       "json[r'",
       field.identifier.name,
       "'] = ",
-      await _convertTypeToJson(
+      await _serializeValue(
         field.type,
         RawCode.fromParts([
           field.identifier,
@@ -264,8 +264,8 @@ mixin _ToJsonSupabase on _Shared {
     return RawCode.fromParts(parts);
   }
 
-  // TODO à commenter
-  Future<Code> _convertTypeToJson(
+  /// Serialize the [valueReference] according with the [rawType].
+  Future<Code> _serializeValue(
     TypeAnnotation rawType,
     Code valueReference,
     DefinitionBuilder builder,
