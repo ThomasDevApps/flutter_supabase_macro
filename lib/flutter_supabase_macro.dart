@@ -189,12 +189,16 @@ extension on NamedTypeAnnotation {
     while (typeDecl is TypeAliasDeclaration) {
       final aliasedType = typeDecl.aliasedType;
       if (aliasedType is! NamedTypeAnnotation) {
-        builder.report(Diagnostic(
+        builder.report(
+          Diagnostic(
             DiagnosticMessage(
                 'Only fields with named types are allowed on serializable '
                     'classes',
-                target: asDiagnosticTarget),
-            Severity.error));
+                target: asDiagnosticTarget,
+            ),
+          Severity.error,
+          ),
+        );
         return null;
       }
       typeDecl = await builder.typeDeclarationOf(aliasedType.identifier);
