@@ -14,6 +14,12 @@ and the Flutter guide for
 
 Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create a JSON format of a template for Supabase.
 
+## ❔ What is a macro
+
+According with the official documentation, a Dart macro is a user-definable piece of code that takes in other code as parameters and operates on it in real-time to create, modify, or add declarations.
+
+Find out more at https://dart.dev/language/macros
+
 ## 🚀 Getting started
 
 Because the macros are still under development, you need to follow these instructions to be able to test this package : https://dart.dev/language/macros#set-up-the-experiment
