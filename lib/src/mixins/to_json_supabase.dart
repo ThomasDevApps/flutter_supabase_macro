@@ -1,4 +1,4 @@
-part of '../supabase_macro.dart';
+part of '../../supabase_macro.dart';
 
 mixin _ToJsonSupabase on _Shared {
   /// Declare the [_toJsonMethodName] method.
