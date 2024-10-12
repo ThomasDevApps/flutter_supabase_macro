@@ -294,8 +294,14 @@ mixin _ToJsonSupabase on _Shared {
         : null;
 
     // Convert the type to a serialized one
-    final typeSerialized = await _serializeType(type, classDeclaration,
-        nullCheck, valueReference, builder, introspectionData);
+    final typeSerialized = await _serializeValueAccordingType(
+      type, 
+      classDeclaration,
+      nullCheck, 
+      valueReference, 
+      builder, 
+      introspectionData
+    );
     if (typeSerialized != null) return typeSerialized;
 
     // Return toJsonSupabase method if already exist
@@ -322,7 +328,7 @@ mixin _ToJsonSupabase on _Shared {
   ///
   /// Currently `List`, `Set`, `Map`, `int`, `double`, `num`,
   /// `String`, `bool` are handled.
-  Future<Code?> _serializeType(
+  Future<Code?> _serializeValueAccordingType(
     NamedTypeAnnotation type,
     ClassDeclaration classDeclaration,
     RawCode? nullCheck,
