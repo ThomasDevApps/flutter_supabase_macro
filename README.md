@@ -17,7 +17,7 @@ Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create a
 - [What is a macro](#-what-is-a-macro)
 - [Getting started](#-getting-started)
 - [How it works](#-how-it-works)
-- [Additional informations](#-additional-informations)
+- [Additional information](#-additional-information)
 
 ## ❔ What is a macro
 
@@ -69,7 +69,7 @@ final json = user.toJsonSupabase();
 print(json); // {'name': 'Toto', 'age': 22}
 ```
 
-## 📖 Additional informations
+## 📖 Additional information
 
 This package is still undergoing experimentation, and is in no way intended for use in production apps.
 
