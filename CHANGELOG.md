@@ -1,3 +1,4 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+Initial release : 
+- Creation of a `toJsonSupabase` which exclude the primary key from the `Map`

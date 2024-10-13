@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use, unintended_html_in_doc_comment
 
-part of '../supabase_macro.dart';
+part of '../../flutter_supabase_macro.dart';
 
 /// Shared logic for all macros which run in the declarations phase.
 mixin _Shared {

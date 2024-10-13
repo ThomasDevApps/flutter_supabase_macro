@@ -14,9 +14,16 @@ and the Flutter guide for
 
 Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create a JSON format of a template for Supabase.
 
+- [What is a macro](#-what-is-a-macro)
 - [Getting started](#-getting-started)
 - [How it works](#-how-it-works)
-- [Additional informations](#-additional-informations)
+- [Additional information](#-additional-information)
+
+## ❔ What is a macro
+
+According with the official documentation, a Dart macro is a user-definable piece of code that takes in other code as parameters and operates on it in real-time to create, modify, or add declarations.
+
+Find out more at https://dart.dev/language/macros
   
 ## 🚀 Getting started
 
@@ -57,12 +64,12 @@ It will generate a `toJsonSupabase()` method that returns a
 (`id` in this case) : 
 
 ```dart
-final user = User(id: 'id', name: 'Toto', age: 22);
+final user = User(id: 'the-id', name: 'Toto', age: 22);
 final json = user.toJsonSupabase(); 
-print(json); // {}
+print(json); // {'name': 'Toto', 'age': 22}
 ```
 
-## 📖 Additional informations
+## 📖 Additional information
 
 This package is still undergoing experimentation, and is in no way intended for use in production apps.
 

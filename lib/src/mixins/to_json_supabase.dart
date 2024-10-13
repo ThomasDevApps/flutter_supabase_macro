@@ -1,4 +1,4 @@
-part of '../supabase_macro.dart';
+part of '../../flutter_supabase_macro.dart';
 
 mixin _ToJsonSupabase on _Shared {
   /// Declare the [_toJsonMethodName] method.
@@ -44,6 +44,9 @@ mixin _ToJsonSupabase on _Shared {
     return true;
   }
 
+  /// Build the `toJsonSupabase` method.
+  ///
+  /// - [primaryKey] is the key to remove from the `Map`.
   Future<void> _buildToJsonSupabase(
     ClassDeclaration clazz,
     TypeDefinitionBuilder typeBuilder,
@@ -68,7 +71,7 @@ mixin _ToJsonSupabase on _Shared {
     if (superclassHasToJson == null) return;
 
     // Create different parts
-    final parts = _createParts(introspectionData,
+    final parts = _initializeMap(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
     // Get all fields
@@ -82,7 +85,6 @@ mixin _ToJsonSupabase on _Shared {
           (field) => addEntryForField(
             field,
             builder,
-            toJsonSupabase,
             introspectionData,
           ),
         ),
@@ -179,8 +181,26 @@ mixin _ToJsonSupabase on _Shared {
     return superclassHasToJson;
   }
 
-  // TODO à doc
-  List<Object> _createParts(
+  /// Initialize the map to return.
+  ///
+  /// Two case are handled according with [superclassHasToJson].
+  ///
+  /// If [superclassHasToJson] is true :
+  /// ```dart
+  /// {
+  ///   final json = super.toJsonSupabase();
+  ///
+  /// ```
+  ///
+  /// Otherwise :
+  /// ```dart
+  /// {
+  ///   final json = <String, dynamic>{};
+  ///
+  /// ```
+  ///
+  /// (The last `}` is voluntarily ommited)
+  List<Object> _initializeMap(
     _SharedIntrospectionData introspectionData, {
     required bool superclassHasToJson,
   }) {
@@ -199,10 +219,18 @@ mixin _ToJsonSupabase on _Shared {
     ];
   }
 
+  /// Create JSON entries for [field].
+  ///
+  /// Example : for a field named `age`, the entry will be :
+  ///
+  /// ```dart
+  /// if (age != null) { // Only if the field is nullable.
+  ///   json[r'"age"'] = age!; // ! present only if the field is nullable by default.
+  /// } // Only if the field is nullable.
+  /// ```
   Future<Code> addEntryForField(
     FieldDeclaration field,
     DefinitionBuilder builder,
-    MethodDeclaration toJson,
     _SharedIntrospectionData introspectionData,
   ) async {
     final parts = <Object>[];
@@ -218,7 +246,7 @@ mixin _ToJsonSupabase on _Shared {
       "json[r'",
       field.identifier.name,
       "'] = ",
-      await _convertTypeToJson(
+      await _serializeValue(
         field.type,
         RawCode.fromParts([
           field.identifier,
@@ -235,8 +263,8 @@ mixin _ToJsonSupabase on _Shared {
     return RawCode.fromParts(parts);
   }
 
-  // TODO à commenter
-  Future<Code> _convertTypeToJson(
+  /// Serialize the [valueReference] according with the [rawType].
+  Future<Code> _serializeValue(
     TypeAnnotation rawType,
     Code valueReference,
     DefinitionBuilder builder,
@@ -265,8 +293,13 @@ mixin _ToJsonSupabase on _Shared {
         : null;
 
     // Convert the type to a serialized one
-    final typeSerialized = await _serializeType(type, classDeclaration,
-        nullCheck, valueReference, builder, introspectionData);
+    final typeSerialized = await _serializeValueAccordingType(
+        type,
+        classDeclaration,
+        nullCheck,
+        valueReference,
+        builder,
+        introspectionData);
     if (typeSerialized != null) return typeSerialized;
 
     // Return toJsonSupabase method if already exist
@@ -285,11 +318,16 @@ mixin _ToJsonSupabase on _Shared {
       ),
     );
     return RawCode.fromString(
-        "throw 'Unable to serialize type ${type.code.debugString}';");
+      "throw 'Unable to serialize type ${type.code.debugString}';",
+    );
   }
 
-  /// TODO à doc
-  Future<Code?> _serializeType(
+  /// Function to serialize [valueReference] according with the
+  /// [classDeclaration] identifier's name.
+  ///
+  /// Currently `List`, `Set`, `Map`, `int`, `double`, `num`,
+  /// `String`, `bool` are handled.
+  Future<Code?> _serializeValueAccordingType(
     NamedTypeAnnotation type,
     ClassDeclaration classDeclaration,
     RawCode? nullCheck,
@@ -305,7 +343,7 @@ mixin _ToJsonSupabase on _Shared {
             '[ for (final item in ',
             valueReference,
             ') ',
-            await _convertTypeToJson(type.typeArguments.single,
+            await _serializeValue(type.typeArguments.single,
                 RawCode.fromString('item'), builder, introspectionData),
             ']',
           ]);
@@ -317,7 +355,7 @@ mixin _ToJsonSupabase on _Shared {
             '(:key, :value) in ',
             valueReference,
             '.entries) key:',
-            await _convertTypeToJson(type.typeArguments.last,
+            await _serializeValue(type.typeArguments.last,
                 RawCode.fromString('value'), builder, introspectionData),
             '}',
           ]);
@@ -328,7 +366,8 @@ mixin _ToJsonSupabase on _Shared {
     return null;
   }
 
-  // TODO à commenter
+  /// Returns [_toJsonMethodName] from the class (if exist).
+  /// Returns null otherwise.
   Future<Code?>? _getToJsonMethod(
     ClassDeclaration classDeclaration,
     DefinitionBuilder builder,
