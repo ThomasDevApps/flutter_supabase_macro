@@ -71,7 +71,7 @@ mixin _ToJsonSupabase on _Shared {
     if (superclassHasToJson == null) return;
 
     // Create different parts
-    final parts = _serializeValueAccordingType(introspectionData,
+    final parts = _initializeMap(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
     // Get all fields
@@ -85,7 +85,6 @@ mixin _ToJsonSupabase on _Shared {
           (field) => addEntryForField(
             field,
             builder,
-            toJsonSupabase,
             introspectionData,
           ),
         ),
@@ -186,15 +185,15 @@ mixin _ToJsonSupabase on _Shared {
   ///
   /// Two case are handled according with [superclassHasToJson].
   ///
-  /// If [superclassHasToJson] is true : 
+  /// If [superclassHasToJson] is true :
   /// ```dart
   /// {
   ///   final json = super.toJsonSupabase();
-  /// 
+  ///
   /// ```
   ///
-  /// Otherwise : 
-  /// ```dart 
+  /// Otherwise :
+  /// ```dart
   /// {
   ///   final json = <String, dynamic>{};
   ///
@@ -295,13 +294,12 @@ mixin _ToJsonSupabase on _Shared {
 
     // Convert the type to a serialized one
     final typeSerialized = await _serializeValueAccordingType(
-      type, 
-      classDeclaration,
-      nullCheck, 
-      valueReference, 
-      builder, 
-      introspectionData
-    );
+        type,
+        classDeclaration,
+        nullCheck,
+        valueReference,
+        builder,
+        introspectionData);
     if (typeSerialized != null) return typeSerialized;
 
     // Return toJsonSupabase method if already exist
@@ -320,11 +318,11 @@ mixin _ToJsonSupabase on _Shared {
       ),
     );
     return RawCode.fromString(
-        "throw 'Unable to serialize type ${type.code.debugString}';",
+      "throw 'Unable to serialize type ${type.code.debugString}';",
     );
   }
 
-  /// Function to serialize [valueReference] according with the 
+  /// Function to serialize [valueReference] according with the
   /// [classDeclaration] identifier's name.
   ///
   /// Currently `List`, `Set`, `Map`, `int`, `double`, `num`,
@@ -345,7 +343,7 @@ mixin _ToJsonSupabase on _Shared {
             '[ for (final item in ',
             valueReference,
             ') ',
-            await _serializeType(type.typeArguments.single,
+            await _serializeValue(type.typeArguments.single,
                 RawCode.fromString('item'), builder, introspectionData),
             ']',
           ]);
@@ -357,7 +355,7 @@ mixin _ToJsonSupabase on _Shared {
             '(:key, :value) in ',
             valueReference,
             '.entries) key:',
-            await _serializeType(type.typeArguments.last,
+            await _serializeValue(type.typeArguments.last,
                 RawCode.fromString('value'), builder, introspectionData),
             '}',
           ]);
