@@ -12,7 +12,7 @@ mixin _ToJsonSupabase on _Shared {
     if (!checkNoToJson) return;
     builder.declareInType(
       DeclarationCode.fromParts(
-        [' external ', mapStringObject, ' $_toJsonMethodName();'],
+        ['  external ', mapStringObject, ' $_toJsonMethodName();\n'],
       ),
     );
   }
@@ -92,7 +92,14 @@ mixin _ToJsonSupabase on _Shared {
     );
 
     parts.add('return json;\n  }');
-    builder.augment(FunctionBodyCode.fromParts(parts));
+    builder.augment(
+      FunctionBodyCode.fromParts(parts),
+      docComments: CommentCode.fromParts([
+        '  /// Map representing the model in json format for Supabase.\n',
+        '  ///\n',
+        '  /// The `primaryKey` is exclude from the map.'
+      ]),
+    );
   }
 
   /// Returns void if [toJsonSupabase] not exist.
