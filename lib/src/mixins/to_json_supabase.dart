@@ -12,7 +12,7 @@ mixin _ToJsonSupabase on _Shared {
     if (!checkNoToJson) return;
     builder.declareInType(
       DeclarationCode.fromParts(
-        [' external ', mapStringObject, ' $_toJsonMethodName();'],
+        ['  external ', mapStringObject, ' $_toJsonMethodName();\n'],
       ),
     );
   }
@@ -70,7 +70,7 @@ mixin _ToJsonSupabase on _Shared {
         await _checkSuperclassHasToJson(introspectionData, typeBuilder);
     if (superclassHasToJson == null) return;
 
-    // Create different parts
+    // Initialize the map to return
     final parts = _initializeMap(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
@@ -92,7 +92,14 @@ mixin _ToJsonSupabase on _Shared {
     );
 
     parts.add('return json;\n  }');
-    builder.augment(FunctionBodyCode.fromParts(parts));
+    builder.augment(
+      FunctionBodyCode.fromParts(parts),
+      docComments: CommentCode.fromParts([
+        '  /// Map representing the model in json format for Supabase.\n',
+        '  ///\n',
+        '  /// The `primaryKey` is exclude from the map.'
+      ]),
+    );
   }
 
   /// Returns void if [toJsonSupabase] not exist.
@@ -113,7 +120,7 @@ mixin _ToJsonSupabase on _Shared {
     if (!methodIsValid) return;
   }
 
-  /// Check that [method] is a valid `toJson` method, throws a
+  /// Check that [method] is a valid `toJsonSupabase` method, throws a
   /// [DiagnosticException] if not.
   Future<bool> _checkValidToJson(
     MethodDeclaration method,
@@ -183,7 +190,7 @@ mixin _ToJsonSupabase on _Shared {
 
   /// Initialize the map to return.
   ///
-  /// Two case are handled according with [superclassHasToJson].
+  /// Two cases are handled according with [superclassHasToJson].
   ///
   /// If [superclassHasToJson] is true :
   /// ```dart
@@ -199,7 +206,7 @@ mixin _ToJsonSupabase on _Shared {
   ///
   /// ```
   ///
-  /// (The last `}` is voluntarily ommited)
+  /// (The last `}` is voluntarily omitted)
   List<Object> _initializeMap(
     _SharedIntrospectionData introspectionData, {
     required bool superclassHasToJson,
