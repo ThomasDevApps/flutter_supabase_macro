@@ -70,7 +70,7 @@ mixin _ToJsonSupabase on _Shared {
         await _checkSuperclassHasToJson(introspectionData, typeBuilder);
     if (superclassHasToJson == null) return;
 
-    // Create different parts
+    // Initialize the map to return
     final parts = _initializeMap(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
