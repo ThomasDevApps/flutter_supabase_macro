@@ -46,6 +46,7 @@ final class _SharedIntrospectionData {
 
   static Future<_SharedIntrospectionData> build(
       DeclarationPhaseIntrospector builder, ClassDeclaration clazz) async {
+    // Resolve identifiers
     final (list, map, mapEntry, dynamic, string) = await (
       builder.resolveIdentifier(_dartCore, 'List'),
       builder.resolveIdentifier(_dartCore, 'Map'),
@@ -53,6 +54,8 @@ final class _SharedIntrospectionData {
       builder.resolveIdentifier(_dartCore, 'dynamic'),
       builder.resolveIdentifier(_dartCore, 'String'),
     ).wait;
+
+    // Get all NamedTypeAnnotationCode
     final dynamicCode = NamedTypeAnnotationCode(name: dynamic);
     final jsonListCode = NamedTypeAnnotationCode(name: list, typeArguments: [
       dynamicCode,
@@ -62,7 +65,11 @@ final class _SharedIntrospectionData {
       dynamicCode,
     ]);
     final stringCode = NamedTypeAnnotationCode(name: string);
+
+    // Get the class's superclass (if exist)
     final superclass = clazz.superclass;
+
+    // Get fields, jsonMapType and the declaration of the superclass.
     final (fields, jsonMapType, superclassDecl) = await (
       builder.fieldsOf(clazz),
       builder.resolve(jsonMapCode),
@@ -71,6 +78,7 @@ final class _SharedIntrospectionData {
           : builder.typeDeclarationOf(superclass.identifier),
     ).wait;
 
+    // Create _SharedIntrospectionData model
     return _SharedIntrospectionData(
       clazz: clazz,
       fields: fields,
