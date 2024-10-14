@@ -183,7 +183,7 @@ mixin _ToJsonSupabase on _Shared {
 
   /// Initialize the map to return.
   ///
-  /// Two case are handled according with [superclassHasToJson].
+  /// Two cases are handled according with [superclassHasToJson].
   ///
   /// If [superclassHasToJson] is true :
   /// ```dart
@@ -199,7 +199,7 @@ mixin _ToJsonSupabase on _Shared {
   ///
   /// ```
   ///
-  /// (The last `}` is voluntarily ommited)
+  /// (The last `}` is voluntarily omitted)
   List<Object> _initializeMap(
     _SharedIntrospectionData introspectionData, {
     required bool superclassHasToJson,
