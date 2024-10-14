@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:macros/macros.dart';
 
+part 'src/extensions/code_extension.dart';
 part 'src/extensions/iterable_extension.dart';
 part 'src/extensions/named_type_annotation_extension.dart';
 part 'src/mixins/shared.dart';
@@ -58,30 +59,4 @@ extension _IsExactly on TypeDeclaration {
   /// Cheaper than checking types using a [StaticType].
   bool isExactly(String name, Uri library) =>
       identifier.name == name && this.library.uri == library;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-extension on Code {
-  /// Used for error messages.
-  String get debugString {
-    final buffer = StringBuffer();
-    _writeDebugString(buffer);
-    return buffer.toString();
-  }
-
-  void _writeDebugString(StringBuffer buffer) {
-    for (final part in parts) {
-      switch (part) {
-        case Code():
-          part._writeDebugString(buffer);
-        case Identifier():
-          buffer.write(part.name);
-        case OmittedTypeAnnotation():
-          buffer.write('<omitted>');
-        default:
-          buffer.write(part);
-      }
-    }
-  }
 }
