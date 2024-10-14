@@ -7,6 +7,7 @@ import 'package:macros/macros.dart';
 part 'src/extensions/code_extension.dart';
 part 'src/extensions/iterable_extension.dart';
 part 'src/extensions/named_type_annotation_extension.dart';
+part 'src/extensions/type_declaration_extension.dart';
 part 'src/mixins/shared.dart';
 part 'src/mixins/to_json_supabase.dart';
 part 'src/models/shared_introspection_data.dart';
@@ -53,10 +54,3 @@ macro class FlutterSupabaseMacro
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-extension _IsExactly on TypeDeclaration {
-  /// Cheaper than checking types using a [StaticType].
-  bool isExactly(String name, Uri library) =>
-      identifier.name == name && this.library.uri == library;
-}
