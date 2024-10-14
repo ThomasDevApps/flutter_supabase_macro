@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:macros/macros.dart';
 
+part 'src/extensions/iterable_extension.dart';
 part 'src/mixins/shared.dart';
 part 'src/mixins/to_json_supabase.dart';
 part 'src/models/shared_introspection_data.dart';
@@ -47,17 +48,6 @@ macro class FlutterSupabaseMacro
       introspectionData,
       primaryKey,
     );
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-extension _FirstWhereOrNull<T> on Iterable<T> {
-  T? firstWhereOrNull(bool Function(T) compare) {
-    for (final item in this) {
-      if (compare(item)) return item;
-    }
-    return null;
   }
 }
 
