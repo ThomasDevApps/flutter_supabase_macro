@@ -120,7 +120,7 @@ mixin _ToJsonSupabase on _Shared {
     if (!methodIsValid) return;
   }
 
-  /// Check that [method] is a valid `toJson` method, throws a
+  /// Check that [method] is a valid `toJsonSupabase` method, throws a
   /// [DiagnosticException] if not.
   Future<bool> _checkValidToJson(
     MethodDeclaration method,

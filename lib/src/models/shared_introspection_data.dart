@@ -23,7 +23,7 @@ final class _SharedIntrospectionData {
   /// The resolved identifier for the [MapEntry] class.
   final Identifier mapEntry;
 
-  /// A [Code] representation of the type [Object].
+  /// A [Code] representation of the type `dynamic`.
   final NamedTypeAnnotationCode dynamicCode;
 
   /// A [Code] representation of the type [String].
