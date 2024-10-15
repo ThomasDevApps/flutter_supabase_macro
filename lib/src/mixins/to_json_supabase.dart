@@ -236,8 +236,8 @@ mixin _ToJsonSupabase on _Shared {
   /// } // Only if the field is nullable.
   /// ```
   ///
-  /// If `age` is a `String` and [isPrimaryKey], `age.isNotEmpty` will be added
-  /// in the definition of the condition
+  /// If `age` is a `String` and [isPrimaryKey] is true, then `age.isNotEmpty`
+  /// will be added in the definition of the condition
   Future<Code> addEntryForField(
     FieldDeclaration field,
     DefinitionBuilder builder,
