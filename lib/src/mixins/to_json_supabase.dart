@@ -74,10 +74,12 @@ mixin _ToJsonSupabase on _Shared {
     final parts = _initializeMap(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
+    // Get all fields
+    final fields = introspectionData.fields;
     // Add entry for each fields
     parts.addAll(
       await Future.wait(
-        introspectionData.fields.map(
+        fields.map(
           (field) => addEntryForField(
             field,
             builder,
@@ -94,7 +96,7 @@ mixin _ToJsonSupabase on _Shared {
       docComments: CommentCode.fromParts([
         '  /// Map representing the model in json format for Supabase.\n',
         '  ///\n',
-        '  /// The primary key [${introspectionData.fields.first.identifier.name}]',
+        '  /// The primary key [${fields.first.identifier.name}]',
         ' is exclude from the map if empty.'
       ]),
     );
