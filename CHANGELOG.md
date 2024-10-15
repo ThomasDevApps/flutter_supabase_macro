@@ -7,4 +7,4 @@ Initial release :
 
 Only exclude `primaryKey` from the Map if :
 - Can't be nullable then check that `!= null`
-- The type is `String` check that the value `isNotEmpty`
+- The type is `String`, then check that the value `isNotEmpty`
