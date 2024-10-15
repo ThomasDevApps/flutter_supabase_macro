@@ -74,18 +74,15 @@ mixin _ToJsonSupabase on _Shared {
     final parts = _initializeMap(introspectionData,
         superclassHasToJson: superclassHasToJson);
 
-    // Get all fields
-    final fields = introspectionData.fields.where((f) {
-      bool canBeAdd = f.identifier.name != primaryKey;
-      return canBeAdd;
-    });
+    // Add entry for each fields
     parts.addAll(
       await Future.wait(
-        fields.map(
+        introspectionData.fields.map(
           (field) => addEntryForField(
             field,
             builder,
             introspectionData,
+            isPrimaryKey: field.identifier.name == primaryKey,
           ),
         ),
       ),
@@ -97,7 +94,8 @@ mixin _ToJsonSupabase on _Shared {
       docComments: CommentCode.fromParts([
         '  /// Map representing the model in json format for Supabase.\n',
         '  ///\n',
-        '  /// The `primaryKey` is exclude from the map.'
+        '  /// The primary key [${introspectionData.fields.first.identifier.name}]',
+        ' is exclude from the map if empty.'
       ]),
     );
   }
@@ -235,20 +233,32 @@ mixin _ToJsonSupabase on _Shared {
   ///   json[r'"age"'] = age!; // ! present only if the field is nullable by default.
   /// } // Only if the field is nullable.
   /// ```
+  // TODO ajouter commentaires
   Future<Code> addEntryForField(
     FieldDeclaration field,
     DefinitionBuilder builder,
-    _SharedIntrospectionData introspectionData,
-  ) async {
+    _SharedIntrospectionData introspectionData, {
+    bool isPrimaryKey = false,
+  }) async {
     final parts = <Object>[];
     final doNullCheck = field.type.isNullable;
-    if (doNullCheck) {
-      parts.addAll([
-        'if (',
-        field.identifier,
-        ' != null) {\n      ',
-      ]);
+    final needCondition = doNullCheck || isPrimaryKey;
+
+    if (needCondition) {
+      parts.addAll(['if (']);
     }
+    if (doNullCheck) parts.addAll([field.identifier, ' != null']);
+    if (isPrimaryKey) {
+      final type = _checkNamedType(field.type, builder);
+      if (type != null) {
+        parts.addAll([
+          if (doNullCheck) ' && ',
+          if (type.identifier.name == 'String')
+            '${field.identifier.name}.isNotEmpty',
+        ]);
+      }
+    }
+    if (needCondition) parts.add(') {\n      ');
     parts.addAll([
       "json[r'",
       field.identifier.name,
@@ -264,7 +274,7 @@ mixin _ToJsonSupabase on _Shared {
       ),
       ';\n    ',
     ]);
-    if (doNullCheck) {
+    if (needCondition) {
       parts.add('}\n    ');
     }
     return RawCode.fromParts(parts);
