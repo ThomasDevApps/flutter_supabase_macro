@@ -44,13 +44,11 @@ macro class FlutterSupabaseMacro
     ClassDeclaration clazz, 
     TypeDefinitionBuilder builder,
   ) async {
-    final introspectionData =
-      await _SharedIntrospectionData.build(builder, clazz);
-    await _buildToJsonSupabase(
-      clazz,
+    final introspectionData = await _SharedIntrospectionData.build(
       builder,
-      introspectionData,
+      clazz,
     );
+    await _buildToJsonSupabase(clazz, builder, introspectionData);
   }
 }
 
