@@ -68,22 +68,6 @@ class User {
 ```
 It will generate a `toJsonSupabase()` method that returns a `Map<String, dynamic>`.
 
-Example 1 : Contain `id` because `isNotEmpty` :
-
-```dart
-final user = User(id: 'the-id', name: 'Toto', age: 22);
-final json = user.toJsonSupabase(); 
-print(json); // {'id': 'the-id', 'name': 'Toto', 'age': 22}
-```
-
-Example 2 : Not contain `id` because `isEmpty` :
-
-```dart
-final user = User(id: '', name: 'Toto', age: 22);
-final json = user.toJsonSupabase(); 
-print(json); // {'name': 'Toto', 'age': 22}
-```
-
 ## 📖 Additional information
 
 This package is still undergoing experimentation, and is in no way intended for 
