@@ -1,4 +1,15 @@
+// ignore_for_file: deprecated_member_use
+
 part of '../../flutter_supabase_macro.dart';
+
+extension HelperExtensionString on String {
+  /// Set the first character to upper case.
+  ///
+  /// ```dart
+  /// 'test of the function'.firstLetterUpperCase(); // 'Test of the function'
+  /// ```
+  String firstLetterToUpperCase() => "${this[0].toUpperCase()}${substring(1)}";
+}
 
 mixin _ToJsonSupabase on _Shared {
   String get primaryKey;
@@ -12,11 +23,45 @@ mixin _ToJsonSupabase on _Shared {
     // Check that no toJsonSupabase method exist
     final checkNoToJson = await _checkNoToJson(builder, clazz);
     if (!checkNoToJson) return;
+    final boolId = await builder.resolveIdentifier(_dartCore, 'bool');
+    final boolCode = NamedTypeAnnotationCode(name: boolId);
+    final fields = await builder.fieldsOf(clazz);
     builder.declareInType(
-      DeclarationCode.fromParts(
-        ['  external ', mapStringObject, ' $_toJsonMethodName();\n'],
-      ),
+      DeclarationCode.fromParts([
+        '  external ',
+        mapStringObject,
+        ' $_toJsonMethodName(',
+        if (fields.isNotEmpty) '{\n',
+        if (fields.isNotEmpty) ..._createNamedParams(boolCode, fields),
+        if (fields.isNotEmpty) '\n  }',
+        ');\n'
+      ]),
     );
+  }
+
+  /// Create `List` of parts.
+  ///
+  /// Example : [fields] contain one element named `firstField`, it will add :
+  /// ```dart
+  /// '    bool? hideFirstField,'
+  /// ```
+  List _createNamedParams(
+    NamedTypeAnnotationCode boolCode,
+    List<FieldDeclaration> fields,
+  ) {
+    final list = [];
+    for (final field in fields) {
+      list.addAll([
+        '    ',
+        boolCode,
+        '? ',
+        'hide',
+        field.identifier.name.firstLetterToUpperCase(),
+        ',',
+        if (field != fields.last) '\n',
+      ]);
+    }
+    return list;
   }
 
   /// Emits an error [Diagnostic] if there is an existing [_toJsonMethodName]
@@ -131,9 +176,7 @@ mixin _ToJsonSupabase on _Shared {
     final methodIsMap = await methodReturnType.isExactly(
       introspectionData.jsonMapType,
     );
-    if (method.namedParameters.isNotEmpty ||
-        method.positionalParameters.isNotEmpty ||
-        !methodIsMap) {
+    if (!methodIsMap) {
       builder.report(
         Diagnostic(
           DiagnosticMessage(
@@ -248,6 +291,8 @@ mixin _ToJsonSupabase on _Shared {
     final doNullCheck = field.type.isNullable;
     final needCondition = doNullCheck || isPrimaryKey;
     // Begin the definition of the condition
+    final t = field.identifier.name.firstLetterToUpperCase();
+    parts.addAll(['if (hide$t==null || !hide$t) {\n      ']);
     if (needCondition) {
       parts.addAll(['if (']);
     }
@@ -265,7 +310,7 @@ mixin _ToJsonSupabase on _Shared {
       }
     }
     // Close definition of the condition and open it
-    if (needCondition) parts.add(') {\n      ');
+    if (needCondition) parts.add(') {\n       ');
     // Add the field in the json
     parts.addAll([
       "json[r'",
@@ -284,8 +329,9 @@ mixin _ToJsonSupabase on _Shared {
     ]);
     // Close the condition
     if (needCondition) {
-      parts.add('}\n    ');
+      parts.add('  }\n    ');
     }
+    parts.add('}\n    ');
     return RawCode.fromParts(parts);
   }
 

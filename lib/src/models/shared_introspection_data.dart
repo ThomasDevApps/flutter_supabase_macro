@@ -26,6 +26,9 @@ final class _SharedIntrospectionData {
   /// A [Code] representation of the type `dynamic`.
   final NamedTypeAnnotationCode dynamicCode;
 
+  /// A [Code] representation of the type [bool].
+  final NamedTypeAnnotationCode boolCode;
+
   /// A [Code] representation of the type [String].
   final NamedTypeAnnotationCode stringCode;
 
@@ -41,18 +44,20 @@ final class _SharedIntrospectionData {
     required this.mapEntry,
     required this.dynamicCode,
     required this.stringCode,
+    required this.boolCode,
     required this.superclass,
   });
 
   static Future<_SharedIntrospectionData> build(
       DeclarationPhaseIntrospector builder, ClassDeclaration clazz) async {
     // Resolve identifiers
-    final (list, map, mapEntry, dynamic, string) = await (
+    final (list, map, mapEntry, dynamic, string, bool) = await (
       builder.resolveIdentifier(_dartCore, 'List'),
       builder.resolveIdentifier(_dartCore, 'Map'),
       builder.resolveIdentifier(_dartCore, 'MapEntry'),
       builder.resolveIdentifier(_dartCore, 'dynamic'),
       builder.resolveIdentifier(_dartCore, 'String'),
+      builder.resolveIdentifier(_dartCore, 'bool'),
     ).wait;
 
     // Get all NamedTypeAnnotationCode
@@ -65,6 +70,7 @@ final class _SharedIntrospectionData {
       dynamicCode,
     ]);
     final stringCode = NamedTypeAnnotationCode(name: string);
+    final boolCode = NamedTypeAnnotationCode(name: bool);
 
     // Get the class's superclass (if exist)
     final superclass = clazz.superclass;
@@ -88,6 +94,7 @@ final class _SharedIntrospectionData {
       mapEntry: mapEntry,
       dynamicCode: dynamicCode,
       stringCode: stringCode,
+      boolCode: boolCode,
       superclass: superclassDecl as ClassDeclaration?,
     );
   }
