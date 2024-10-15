@@ -6,5 +6,5 @@ Initial release :
 ## 0.0.4
 
 Only exclude `primaryKey` from the Map if :
-- `!= null`
-- If `String`, `.isNotEmpty`
+- Can't be nullable then check that `!= null`
+- The type is `String` check that the value `isNotEmpty`
