@@ -62,13 +62,20 @@ class User {
   // ...
 }
 ```
-It will generate a `toJsonSupabase()` method that returns a 
-`Map<String, dynamic>` that does not contain the `primaryKey` only if `!= null` 
-and `isNotEmpty` (if `String`)
-(`id` in this case) : 
+It will generate a `toJsonSupabase()` method that returns a `Map<String, dynamic>`.
+
+Example 1 : Contain `id` because `isNotEmpty` :
 
 ```dart
 final user = User(id: 'the-id', name: 'Toto', age: 22);
+final json = user.toJsonSupabase(); 
+print(json); // {'id': 'the-id', 'name': 'Toto', 'age': 22}
+```
+
+Example 2 : Not contain `id` because `isEmpty` :
+
+```dart
+final user = User(id: '', name: 'Toto', age: 22);
 final json = user.toJsonSupabase(); 
 print(json); // {'name': 'Toto', 'age': 22}
 ```
