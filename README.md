@@ -15,6 +15,10 @@ and the Flutter guide for
 Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create 
 a JSON format of a template for Supabase.
 
+| Before                                                                                                                           | After                                                                                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| ![before](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/flutter_supabase_macro_0.0.4/assets/before.png) | ![after](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/flutter_supabase_macro_0.0.4/assets/after.png) |
+
 - [What is a macro](#-what-is-a-macro)
 - [Getting started](#-getting-started)
 - [How it works](#-how-it-works)
@@ -62,15 +66,7 @@ class User {
   // ...
 }
 ```
-It will generate a `toJsonSupabase()` method that returns a 
-`Map<String, dynamic>` that does not contain the `primaryKey` 
-(`id` in this case) : 
-
-```dart
-final user = User(id: 'the-id', name: 'Toto', age: 22);
-final json = user.toJsonSupabase(); 
-print(json); // {'name': 'Toto', 'age': 22}
-```
+It will generate a `toJsonSupabase()` method that returns a `Map<String, dynamic>`.
 
 ## 📖 Additional information
 
