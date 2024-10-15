@@ -63,7 +63,8 @@ class User {
 }
 ```
 It will generate a `toJsonSupabase()` method that returns a 
-`Map<String, dynamic>` that does not contain the `primaryKey` 
+`Map<String, dynamic>` that does not contain the `primaryKey` only if `!= null` 
+and `isNotEmpty` (if `String`)
 (`id` in this case) : 
 
 ```dart
