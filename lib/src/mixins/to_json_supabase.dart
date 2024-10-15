@@ -1,6 +1,8 @@
 part of '../../flutter_supabase_macro.dart';
 
 mixin _ToJsonSupabase on _Shared {
+  String get primaryKey;
+
   /// Declare the [_toJsonMethodName] method.
   Future<void> _declareToJsonSupabase(
     ClassDeclaration clazz,
@@ -51,7 +53,6 @@ mixin _ToJsonSupabase on _Shared {
     ClassDeclaration clazz,
     TypeDefinitionBuilder typeBuilder,
     _SharedIntrospectionData introspectionData,
-    String primaryKey,
   ) async {
     // Get all methods of the class
     final methods = await typeBuilder.methodsOf(clazz);
@@ -84,7 +85,6 @@ mixin _ToJsonSupabase on _Shared {
             field,
             builder,
             introspectionData,
-            isPrimaryKey: field.identifier.name == primaryKey,
           ),
         ),
       ),
@@ -241,10 +241,10 @@ mixin _ToJsonSupabase on _Shared {
   Future<Code> addEntryForField(
     FieldDeclaration field,
     DefinitionBuilder builder,
-    _SharedIntrospectionData introspectionData, {
-    bool isPrimaryKey = false,
-  }) async {
+    _SharedIntrospectionData introspectionData,
+  ) async {
     final parts = <Object>[];
+    final isPrimaryKey = field.identifier.name == primaryKey;
     final doNullCheck = field.type.isNullable;
     final needCondition = doNullCheck || isPrimaryKey;
     // Begin the definition of the condition

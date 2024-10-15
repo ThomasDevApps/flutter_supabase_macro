@@ -21,6 +21,7 @@ macro class FlutterSupabaseMacro
     implements ClassDeclarationsMacro, ClassDefinitionMacro {
 
   /// Primary key to exclude from the `toJsonSupabase`.
+  @override
   final String primaryKey;
     
   const FlutterSupabaseMacro({this.primaryKey = 'id'});
@@ -49,7 +50,6 @@ macro class FlutterSupabaseMacro
       clazz,
       builder,
       introspectionData,
-      primaryKey,
     );
   }
 }
