@@ -17,7 +17,7 @@ a JSON format of a template for Supabase.
 
 | Before                                                                                                                           | After                                                                                                                          |
 |----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| ![before](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/flutter_supabase_macro_0.0.4/assets/before.png) | ![after](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/flutter_supabase_macro_0.0.4/assets/after.png) |
+| ![before](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/main/assets/before.png) | ![after](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/main/assets/after.png) |
 
 - [What is a macro](#-what-is-a-macro)
 - [Getting started](#-getting-started)
