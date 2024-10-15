@@ -235,7 +235,9 @@ mixin _ToJsonSupabase on _Shared {
   ///   json[r'"age"'] = age!; // ! present only if the field is nullable by default.
   /// } // Only if the field is nullable.
   /// ```
-  // TODO ajouter commentaires
+  ///
+  /// If `age` is a `String` and the primaryKey, `age.isNotEmpty` will be added
+  /// in the definition of the condition
   Future<Code> addEntryForField(
     FieldDeclaration field,
     DefinitionBuilder builder,
@@ -245,11 +247,13 @@ mixin _ToJsonSupabase on _Shared {
     final parts = <Object>[];
     final doNullCheck = field.type.isNullable;
     final needCondition = doNullCheck || isPrimaryKey;
-
+    // Begin the definition of the condition
     if (needCondition) {
       parts.addAll(['if (']);
     }
+    // Check that the field is not null
     if (doNullCheck) parts.addAll([field.identifier, ' != null']);
+    // Check that the field is not empty (if String)
     if (isPrimaryKey) {
       final type = _checkNamedType(field.type, builder);
       if (type != null) {
@@ -260,7 +264,9 @@ mixin _ToJsonSupabase on _Shared {
         ]);
       }
     }
+    // Close definition of the condition and open it
     if (needCondition) parts.add(') {\n      ');
+    // Add the field in the json
     parts.addAll([
       "json[r'",
       field.identifier.name,
@@ -276,6 +282,7 @@ mixin _ToJsonSupabase on _Shared {
       ),
       ';\n    ',
     ]);
+    // Close the condition
     if (needCondition) {
       parts.add('}\n    ');
     }
