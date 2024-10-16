@@ -1,4 +1,4 @@
-## 0.0.1(https://github.com/ThomasDevApps/flutter_supabase_macro/pull/1)
+## 0.0.1 (https://github.com/ThomasDevApps/flutter_supabase_macro/pull/1)
 
 Initial release : 
 - Creation of a `toJsonSupabase` which exclude the `primaryKey` from the `Map`
