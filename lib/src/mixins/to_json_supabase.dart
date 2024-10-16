@@ -45,8 +45,7 @@ mixin _ToJsonSupabase on _Shared {
       list.addAll([
         '    ',
         boolCode,
-        '? ',
-        'remove',
+        '? remove',
         field.identifier.name._firstLetterToUpperCase(),
         ',',
         if (field != fields.last) '\n',
