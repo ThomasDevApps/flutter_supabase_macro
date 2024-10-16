@@ -11,6 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/to/develop-packages).
 -->
 # Flutter Supabase Macro
+![testing workflow](https://github.com/ThomasDevApps/flutter_supabase_macro/actions/workflows/main.yml/badge.svg)
 
 Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create 
 a JSON format of a template for Supabase.
