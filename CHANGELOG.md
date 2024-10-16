@@ -1,4 +1,4 @@
-## 0.0.5
+## 0.0.5 (https://github.com/ThomasDevApps/flutter_supabase_macro/pull/5)
 
 Add a named parameter for each field of the class.
 For example, if class contain a field named `id` then `bool? hideId` 
