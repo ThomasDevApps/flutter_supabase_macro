@@ -207,14 +207,19 @@ mixin _ToJsonSupabase on _Shared {
   ) async {
     bool superclassHasToJson = false;
     final superclassDeclaration = introspectionData.superclass;
-    final superClassIsObject =
-        superclassDeclaration?.isExactly('Object', _dartCore);
+    final superClassIsObject = superclassDeclaration?.isExactly(
+      'Object',
+      _dartCore,
+    );
     if (superclassDeclaration != null && !superClassIsObject!) {
       final superclassMethods = await builder.methodsOf(superclassDeclaration);
       for (final superMethod in superclassMethods) {
         if (superMethod.identifier.name == _toJsonMethodName) {
-          final jsonMethodIsValid =
-              await _checkValidToJson(superMethod, introspectionData, builder);
+          final jsonMethodIsValid = await _checkValidToJson(
+            superMethod,
+            introspectionData,
+            builder,
+          );
           if (!jsonMethodIsValid) return null;
           superclassHasToJson = true;
           break;
