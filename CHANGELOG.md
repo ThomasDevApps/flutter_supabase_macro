@@ -4,7 +4,7 @@ Add a named parameter for each field of the class.
 For example, if class contain a field named `id` then `bool? removeId` 
 will be added as a named parameter of `toJsonSupabase`.
 
-If `removeId` is not null and true, then `id` will be remove from the json.
+If `removeId` is not null and true, then `id` will not be add the json.
 
 ## 0.0.4 (https://github.com/ThomasDevApps/flutter_supabase_macro/pull/4)
 
