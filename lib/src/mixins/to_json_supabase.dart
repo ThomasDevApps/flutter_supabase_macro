@@ -16,6 +16,9 @@ mixin _ToJsonSupabase on _Shared {
     // Check that no toJsonSupabase method exist
     final checkNoToJson = await _checkNoToJson(builder, clazz);
     if (!checkNoToJson) return;
+    // Check that required fields exist
+    final checkRequiredFields = await _checkRequiredFields(builder, clazz);
+    if (!checkRequiredFields) return;
     final boolId = await builder.resolveIdentifier(_dartCore, 'bool');
     final boolCode = NamedTypeAnnotationCode(name: boolId);
     final fields = await builder.fieldsOf(clazz);
@@ -54,6 +57,51 @@ mixin _ToJsonSupabase on _Shared {
       ]);
     }
     return list;
+  }
+
+  // TODO à documenter
+  Future<bool> _checkRequiredFields(
+    DeclarationBuilder builder,
+    ClassDeclaration clazz,
+  ) async {
+    bool requiredFieldsAreValid = true;
+    if (requiredFields != null && requiredFields!.isNotEmpty) {
+      if (requiredFields! is List<String>) {
+        builder.report(
+          Diagnostic(
+            DiagnosticMessage(
+              'Required fields need to be a List of String',
+              target: clazz.asDiagnosticTarget,
+            ),
+            Severity.error,
+          ),
+        );
+        requiredFieldsAreValid = false;
+      }
+      if (requiredFieldsAreValid) {
+        final fieldsName = (await builder.fieldsOf(clazz)).map(
+          (f) => f.identifier.name,
+        );
+        for (final requiredField in requiredFields!) {
+          if (!fieldsName.contains(requiredField)) {
+            requiredFieldsAreValid = false;
+          }
+          break;
+        }
+        if (!requiredFieldsAreValid) {
+          builder.report(
+            Diagnostic(
+              DiagnosticMessage(
+                'Required fields need to exist as fields',
+                target: clazz.asDiagnosticTarget,
+              ),
+              Severity.error,
+            ),
+          );
+        }
+      }
+    }
+    return requiredFieldsAreValid;
   }
 
   /// Emits an error [Diagnostic] if there is an existing [_toJsonMethodName]
