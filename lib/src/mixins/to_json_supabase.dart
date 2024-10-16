@@ -142,6 +142,8 @@ mixin _ToJsonSupabase on _Shared {
     );
   }
 
+  /// Create the documentation for [_toJsonMethodName] method
+  /// according with [fields].
   CommentCode _createDocumentationForMethod(List<FieldDeclaration> fields) {
     return CommentCode.fromParts([
       '  /// Map representing the model in json format for Supabase.\n',
