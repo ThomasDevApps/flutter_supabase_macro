@@ -11,22 +11,52 @@ class User {
 }
 
 void main() {
-  test('Test that id is missing from the json because is empty', () {
-    final user = User(id: '', name: 'Toto', age: 22);
-    final json = user.toJsonSupabase();
+  group('Test the removal of the primaryKey `id`', () {
+    test('Test that `id` is remove from the json because is empty', () {
+      final user = User(id: '', name: 'Toto', age: 22);
+      final json = user.toJsonSupabase();
 
-    expect(json.keys.length, 2);
-    expect(json['name'], 'Toto');
-    expect(json['age'], 22);
+      expect(json.keys.length, 2);
+      expect(json['name'], 'Toto');
+      expect(json['age'], 22);
+    });
+
+    test('Test that `id` is NOT remove from the json because is NOT empty', () {
+      final user = User(id: 'id-123', name: 'Toto', age: 22);
+      final json = user.toJsonSupabase();
+
+      expect(json.keys.length, 3);
+      expect(json['id'], 'id-123');
+      expect(json['name'], 'Toto');
+      expect(json['age'], 22);
+    });
   });
 
-  test('Test that id is NOT missing from the json because is NOT empty', () {
-    final user = User(id: 'id-123', name: 'Toto', age: 22);
-    final json = user.toJsonSupabase();
+  group('Test hidings', () {
+    final user = User(id: '1234', name: 'Francisa', age: 45);
 
-    expect(json.keys.length, 3);
-    expect(json['id'], 'id-123');
-    expect(json['name'], 'Toto');
-    expect(json['age'], 22);
+    test('Test `id` is remove from the json', () {
+      final json = user.toJsonSupabase(removeId: true);
+
+      expect(json.keys.length, 2);
+      expect(json['name'], 'Francisa');
+      expect(json['age'], 45);
+    });
+
+    test('Test `name` is remove from the json', () {
+      final json = user.toJsonSupabase(removeName: true);
+
+      expect(json.keys.length, 2);
+      expect(json['id'], '1234');
+      expect(json['age'], 45);
+    });
+
+    test('Test `age` is remove from the json', () {
+      final json = user.toJsonSupabase(removeAge: true);
+
+      expect(json.keys.length, 2);
+      expect(json['id'], '1234');
+      expect(json['name'], 'Francisa');
+    });
   });
 }

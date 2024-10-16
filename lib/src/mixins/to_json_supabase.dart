@@ -1,6 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 part of '../../flutter_supabase_macro.dart';
 
 mixin _ToJsonSupabase on _Shared {
+  String get primaryKey;
+
   /// Declare the [_toJsonMethodName] method.
   Future<void> _declareToJsonSupabase(
     ClassDeclaration clazz,
@@ -10,11 +14,45 @@ mixin _ToJsonSupabase on _Shared {
     // Check that no toJsonSupabase method exist
     final checkNoToJson = await _checkNoToJson(builder, clazz);
     if (!checkNoToJson) return;
+    final boolId = await builder.resolveIdentifier(_dartCore, 'bool');
+    final boolCode = NamedTypeAnnotationCode(name: boolId);
+    final fields = await builder.fieldsOf(clazz);
     builder.declareInType(
-      DeclarationCode.fromParts(
-        ['  external ', mapStringObject, ' $_toJsonMethodName();\n'],
-      ),
+      DeclarationCode.fromParts([
+        '  external ',
+        mapStringObject,
+        ' $_toJsonMethodName(',
+        if (fields.isNotEmpty) '{\n',
+        if (fields.isNotEmpty) ..._createNamedParams(boolCode, fields),
+        if (fields.isNotEmpty) '\n  }',
+        ');\n'
+      ]),
     );
+  }
+
+  /// Create `List` of parts.
+  ///
+  /// Example : [fields] contain one element named `firstField`, it will add :
+  /// ```dart
+  /// '    bool? removeFirstField,'
+  /// ```
+  List _createNamedParams(
+    NamedTypeAnnotationCode boolCode,
+    List<FieldDeclaration> fields,
+  ) {
+    final list = [];
+    for (final field in fields) {
+      list.addAll([
+        '    ',
+        boolCode,
+        '? ',
+        'remove',
+        field.identifier.name._firstLetterToUpperCase(),
+        ',',
+        if (field != fields.last) '\n',
+      ]);
+    }
+    return list;
   }
 
   /// Emits an error [Diagnostic] if there is an existing [_toJsonMethodName]
@@ -51,7 +89,6 @@ mixin _ToJsonSupabase on _Shared {
     ClassDeclaration clazz,
     TypeDefinitionBuilder typeBuilder,
     _SharedIntrospectionData introspectionData,
-    String primaryKey,
   ) async {
     // Get all methods of the class
     final methods = await typeBuilder.methodsOf(clazz);
@@ -84,7 +121,6 @@ mixin _ToJsonSupabase on _Shared {
             field,
             builder,
             introspectionData,
-            isPrimaryKey: field.identifier.name == primaryKey,
           ),
         ),
       ),
@@ -93,13 +129,31 @@ mixin _ToJsonSupabase on _Shared {
     parts.add('return json;\n  }');
     builder.augment(
       FunctionBodyCode.fromParts(parts),
-      docComments: CommentCode.fromParts([
-        '  /// Map representing the model in json format for Supabase.\n',
-        '  ///\n',
-        '  /// The primary key [${fields.first.identifier.name}]',
-        ' is exclude from the map if empty.'
-      ]),
+      docComments: _createDocumentationForMethod(fields),
     );
+  }
+
+  /// Create the documentation for [_toJsonMethodName] method
+  /// according with [fields].
+  CommentCode _createDocumentationForMethod(List<FieldDeclaration> fields) {
+    return CommentCode.fromParts([
+      '  /// Map representing the model in json format for Supabase.\n',
+      '  ///\n',
+      '  /// The primary key [${fields.first.identifier.name}]',
+      ' is exclude from the map if empty.\n',
+      '  ///\n',
+      '  /// ',
+      ...fields.map((f) {
+        return [
+          '[remove',
+          f.identifier.name._firstLetterToUpperCase(),
+          ']',
+          if (f != fields.last) ', '
+        ].join();
+      }),
+      ' can be set for remove field\n'
+          '  /// from the json.'
+    ]);
   }
 
   /// Returns void if [toJsonSupabase] not exist.
@@ -131,9 +185,7 @@ mixin _ToJsonSupabase on _Shared {
     final methodIsMap = await methodReturnType.isExactly(
       introspectionData.jsonMapType,
     );
-    if (method.namedParameters.isNotEmpty ||
-        method.positionalParameters.isNotEmpty ||
-        !methodIsMap) {
+    if (!methodIsMap) {
       builder.report(
         Diagnostic(
           DiagnosticMessage(
@@ -241,13 +293,17 @@ mixin _ToJsonSupabase on _Shared {
   Future<Code> addEntryForField(
     FieldDeclaration field,
     DefinitionBuilder builder,
-    _SharedIntrospectionData introspectionData, {
-    bool isPrimaryKey = false,
-  }) async {
+    _SharedIntrospectionData introspectionData,
+  ) async {
     final parts = <Object>[];
+    final isPrimaryKey = field.identifier.name == primaryKey;
     final doNullCheck = field.type.isNullable;
     final needCondition = doNullCheck || isPrimaryKey;
+    final fieldName = field.identifier.name._firstLetterToUpperCase();
     // Begin the definition of the condition
+    parts.addAll([
+      'if (remove$fieldName==null || !remove$fieldName) {\n      ',
+    ]);
     if (needCondition) {
       parts.addAll(['if (']);
     }
@@ -265,7 +321,7 @@ mixin _ToJsonSupabase on _Shared {
       }
     }
     // Close definition of the condition and open it
-    if (needCondition) parts.add(') {\n      ');
+    if (needCondition) parts.add(') {\n       ');
     // Add the field in the json
     parts.addAll([
       "json[r'",
@@ -284,8 +340,9 @@ mixin _ToJsonSupabase on _Shared {
     ]);
     // Close the condition
     if (needCondition) {
-      parts.add('}\n    ');
+      parts.add('  }\n    ');
     }
+    parts.add('}\n    ');
     return RawCode.fromParts(parts);
   }
 

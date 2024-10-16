@@ -7,6 +7,7 @@ import 'package:macros/macros.dart';
 part 'src/extensions/code_extension.dart';
 part 'src/extensions/iterable_extension.dart';
 part 'src/extensions/named_type_annotation_extension.dart';
+part 'src/extensions/string_extension.dart';
 part 'src/extensions/type_declaration_extension.dart';
 part 'src/mixins/shared.dart';
 part 'src/mixins/to_json_supabase.dart';
@@ -21,6 +22,7 @@ macro class FlutterSupabaseMacro
     implements ClassDeclarationsMacro, ClassDefinitionMacro {
 
   /// Primary key to exclude from the `toJsonSupabase`.
+  @override
   final String primaryKey;
     
   const FlutterSupabaseMacro({this.primaryKey = 'id'});
@@ -43,14 +45,11 @@ macro class FlutterSupabaseMacro
     ClassDeclaration clazz, 
     TypeDefinitionBuilder builder,
   ) async {
-    final introspectionData =
-      await _SharedIntrospectionData.build(builder, clazz);
-    await _buildToJsonSupabase(
-      clazz,
+    final introspectionData = await _SharedIntrospectionData.build(
       builder,
-      introspectionData,
-      primaryKey,
+      clazz,
     );
+    await _buildToJsonSupabase(clazz, builder, introspectionData);
   }
 }
 

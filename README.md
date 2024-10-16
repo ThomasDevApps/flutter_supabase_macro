@@ -12,11 +12,13 @@ and the Flutter guide for
 -->
 # Flutter Supabase Macro
 
+![testing workflow](https://github.com/ThomasDevApps/flutter_supabase_macro/actions/workflows/main.yml/badge.svg)
+
 Package greatly inspired by `JsonCodable` (from Dart), makes it easy to create 
 a JSON format of a template for Supabase.
 
-| Before                                                                                                                           | After                                                                                                                          |
-|----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| Before                                                                                                   | After                                                                                                  |
+|----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | ![before](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/main/assets/before.png) | ![after](https://raw.githubusercontent.com/ThomasDevApps/flutter_supabase_macro/main/assets/after.png) |
 
 - [What is a macro](#-what-is-a-macro)
