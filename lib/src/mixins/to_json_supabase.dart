@@ -43,7 +43,7 @@ mixin _ToJsonSupabase on _Shared {
   ///
   /// Example : [fields] contain one element named `firstField`, it will add :
   /// ```dart
-  /// '    bool? hideFirstField,'
+  /// '    bool? removeFirstField,'
   /// ```
   List _createNamedParams(
     NamedTypeAnnotationCode boolCode,
@@ -55,7 +55,7 @@ mixin _ToJsonSupabase on _Shared {
         '    ',
         boolCode,
         '? ',
-        'hide',
+        'remove',
         field.identifier.name.firstLetterToUpperCase(),
         ',',
         if (field != fields.last) '\n',
@@ -138,13 +138,29 @@ mixin _ToJsonSupabase on _Shared {
     parts.add('return json;\n  }');
     builder.augment(
       FunctionBodyCode.fromParts(parts),
-      docComments: CommentCode.fromParts([
-        '  /// Map representing the model in json format for Supabase.\n',
-        '  ///\n',
-        '  /// The primary key [${fields.first.identifier.name}]',
-        ' is exclude from the map if empty.'
-      ]),
+      docComments: _createDocumentationForMethod(fields),
     );
+  }
+
+  CommentCode _createDocumentationForMethod(List<FieldDeclaration> fields) {
+    return CommentCode.fromParts([
+      '  /// Map representing the model in json format for Supabase.\n',
+      '  ///\n',
+      '  /// The primary key [${fields.first.identifier.name}]',
+      ' is exclude from the map if empty.\n',
+      '  ///\n',
+      '  /// ',
+      ...fields.map((f) {
+        return [
+          '[remove',
+          f.identifier.name.firstLetterToUpperCase(),
+          ']',
+          if (f != fields.last) ', '
+        ].join();
+      }),
+      ' can be set for remove field\n'
+          '  /// from the json.'
+    ]);
   }
 
   /// Returns void if [toJsonSupabase] not exist.
@@ -292,7 +308,7 @@ mixin _ToJsonSupabase on _Shared {
     final needCondition = doNullCheck || isPrimaryKey;
     // Begin the definition of the condition
     final t = field.identifier.name.firstLetterToUpperCase();
-    parts.addAll(['if (hide$t==null || !hide$t) {\n      ']);
+    parts.addAll(['if (remove$t==null || !remove$t) {\n      ']);
     if (needCondition) {
       parts.addAll(['if (']);
     }

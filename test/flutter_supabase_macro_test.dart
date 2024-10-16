@@ -35,24 +35,24 @@ void main() {
   group('Test hidings', () {
     final user = User(id: '1234', name: 'Francisa', age: 45);
 
-    test('Test `id` is remove from the json because is hide', () {
-      final json = user.toJsonSupabase(hideId: true);
+    test('Test `id` is remove from the json', () {
+      final json = user.toJsonSupabase(removeId: true);
 
       expect(json.keys.length, 2);
       expect(json['name'], 'Francisa');
       expect(json['age'], 45);
     });
 
-    test('Test `name` is remove from the json because is hide', () {
-      final json = user.toJsonSupabase(hideName: true);
+    test('Test `name` is remove from the json', () {
+      final json = user.toJsonSupabase(removeName: true);
 
       expect(json.keys.length, 2);
       expect(json['id'], '1234');
       expect(json['age'], 45);
     });
 
-    test('Test `age` is remove from the json because is hide', () {
-      final json = user.toJsonSupabase(hideAge: true);
+    test('Test `age` is remove from the json', () {
+      final json = user.toJsonSupabase(removeAge: true);
 
       expect(json.keys.length, 2);
       expect(json['id'], '1234');
