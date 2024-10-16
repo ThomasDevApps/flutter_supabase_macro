@@ -5,6 +5,8 @@ part of '../../flutter_supabase_macro.dart';
 mixin _ToJsonSupabase on _Shared {
   String get primaryKey;
 
+  List? get requiredFields;
+
   /// Declare the [_toJsonMethodName] method.
   Future<void> _declareToJsonSupabase(
     ClassDeclaration clazz,

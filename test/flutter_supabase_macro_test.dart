@@ -1,7 +1,7 @@
 import 'package:flutter_supabase_macro/flutter_supabase_macro.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-@FlutterSupabaseMacro(primaryKey: 'id')
+@FlutterSupabaseMacro(primaryKey: 'id', requiredFields: ['id', 'ab'])
 class User {
   final String id;
   final String name;

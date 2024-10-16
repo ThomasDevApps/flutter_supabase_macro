@@ -21,11 +21,13 @@ macro class FlutterSupabaseMacro
     with _Shared, _ToJsonSupabase
     implements ClassDeclarationsMacro, ClassDefinitionMacro {
 
-  /// Primary key to exclude from the `toJsonSupabase`.
   @override
   final String primaryKey;
+
+  @override
+  final List? requiredFields;
     
-  const FlutterSupabaseMacro({this.primaryKey = 'id'});
+  const FlutterSupabaseMacro({this.primaryKey = 'id', this.requiredFields});
 
   /// Declares the `fromJson` constructor and `toJsonSupabase` method, but does not
   /// implement them.
