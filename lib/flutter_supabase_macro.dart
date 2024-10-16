@@ -7,6 +7,7 @@ import 'package:macros/macros.dart';
 part 'src/extensions/code_extension.dart';
 part 'src/extensions/iterable_extension.dart';
 part 'src/extensions/named_type_annotation_extension.dart';
+part 'src/extensions/string_extension.dart';
 part 'src/extensions/type_declaration_extension.dart';
 part 'src/mixins/shared.dart';
 part 'src/mixins/to_json_supabase.dart';

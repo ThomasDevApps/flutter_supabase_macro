@@ -2,15 +2,6 @@
 
 part of '../../flutter_supabase_macro.dart';
 
-extension HelperExtensionString on String {
-  /// Set the first character to upper case.
-  ///
-  /// ```dart
-  /// 'test of the function'.firstLetterUpperCase(); // 'Test of the function'
-  /// ```
-  String firstLetterToUpperCase() => "${this[0].toUpperCase()}${substring(1)}";
-}
-
 mixin _ToJsonSupabase on _Shared {
   String get primaryKey;
 
@@ -56,7 +47,7 @@ mixin _ToJsonSupabase on _Shared {
         boolCode,
         '? ',
         'remove',
-        field.identifier.name.firstLetterToUpperCase(),
+        field.identifier.name._firstLetterToUpperCase(),
         ',',
         if (field != fields.last) '\n',
       ]);
@@ -155,7 +146,7 @@ mixin _ToJsonSupabase on _Shared {
       ...fields.map((f) {
         return [
           '[remove',
-          f.identifier.name.firstLetterToUpperCase(),
+          f.identifier.name._firstLetterToUpperCase(),
           ']',
           if (f != fields.last) ', '
         ].join();
@@ -308,9 +299,11 @@ mixin _ToJsonSupabase on _Shared {
     final isPrimaryKey = field.identifier.name == primaryKey;
     final doNullCheck = field.type.isNullable;
     final needCondition = doNullCheck || isPrimaryKey;
+    final fieldName = field.identifier.name._firstLetterToUpperCase();
     // Begin the definition of the condition
-    final t = field.identifier.name.firstLetterToUpperCase();
-    parts.addAll(['if (remove$t==null || !remove$t) {\n      ']);
+    parts.addAll([
+      'if (remove$fieldName==null || !remove$fieldName) {\n      ',
+    ]);
     if (needCondition) {
       parts.addAll(['if (']);
     }
