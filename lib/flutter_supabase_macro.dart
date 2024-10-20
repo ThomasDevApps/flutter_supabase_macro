@@ -21,9 +21,12 @@ macro class FlutterSupabaseMacro
     with _Shared, _ToJsonSupabase
     implements ClassDeclarationsMacro, ClassDefinitionMacro {
 
+  /// Key that can be excluded from the [_toJsonMethodName] 
+  /// if the value is empty.  
   @override
   final String primaryKey;
 
+  /// Required fields need to be included in the [_toJsonMethodName].
   @override
   final List? requiredFields;
     
