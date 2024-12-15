@@ -161,7 +161,12 @@ mixin _ToJsonSupabase on _Shared {
         superclassHasToJson: superclassHasToJson);
 
     // Get all fields
-    final fields = introspectionData.fields;
+    final fields = introspectionData.fields.where((f) {
+      if (requiredFields != null && requiredFields!.isNotEmpty) {
+        return requiredFields!.contains(f.identifier.name);
+      }
+      return true;
+    }).toList();
     // Add entry for each fields
     parts.addAll(
       await Future.wait(

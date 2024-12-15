@@ -1,13 +1,26 @@
 import 'package:flutter_supabase_macro/flutter_supabase_macro.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-@FlutterSupabaseMacro(primaryKey: 'id', requiredFields: ['id', 'ab'])
+@FlutterSupabaseMacro(primaryKey: 'id')
 class User {
   final String id;
   final String name;
   final int age;
 
   const User({required this.id, required this.name, required this.age});
+}
+
+@FlutterSupabaseMacro(primaryKey: 'id', requiredFields: ['id', 'name'])
+class UserWithRequiredFields {
+  final String id;
+  final String name;
+  final int age;
+
+  const UserWithRequiredFields({
+    required this.id,
+    required this.name,
+    required this.age,
+  });
 }
 
 void main() {
@@ -59,4 +72,6 @@ void main() {
       expect(json['name'], 'Francisa');
     });
   });
+
+  group('Test requiredFields', () {});
 }
